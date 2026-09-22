@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Microrred Híbrida 3D — Solar · Eólica · Hidráulica · Batería</title>
+<style>
+:root{--bg:#07111f;--panel:#0e1b2d;--panel2:#12243a;--text:#edf6ff;--muted:#9bb0c6;--accent:#31d7ff;--sun:#ffd34d;--wind:#b879ff;--hydro:#4ca7ff;--bat:#50e3a4;--danger:#ff637e;--border:#23405d}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#173e62 0,#07111f 45%,#040a12 100%);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}header{padding:18px 22px;border-bottom:1px solid var(--border);background:#081525dd;backdrop-filter:blur(12px);position:sticky;top:0;z-index:10}.brand{display:flex;justify-content:space-between;gap:15px;align-items:center}.brand h1{font-size:clamp(20px,3vw,32px);margin:0}.brand p{margin:4px 0 0;color:var(--muted);font-size:13px}.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{padding:7px 10px;border:1px solid var(--border);border-radius:999px;background:#0b192a;font-size:12px}.wrap{max-width:1500px;margin:auto;padding:18px}.grid{display:grid;grid-template-columns:1.55fr .75fr;gap:16px}.card{background:linear-gradient(145deg,#0e1b2d,#0a1524);border:1px solid var(--border);border-radius:18px;box-shadow:0 12px 35px #0005;overflow:hidden}.card h2{font-size:16px;margin:0;padding:15px 16px;border-bottom:1px solid var(--border)}.scene{height:650px;position:relative;background:linear-gradient(#071b2c,#0a2940 55%,#0a1928);}.scene canvas{display:block;width:100%;height:100%}.overlay{position:absolute;left:14px;top:14px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}.stat{background:#071525cc;border:1px solid #31506c;border-radius:12px;padding:8px 11px;font-size:12px;backdrop-filter:blur(8px)}.controls{padding:14px;display:grid;gap:12px}.row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}label{font-size:12px;color:var(--muted);display:grid;gap:5px}input,select,button{font:inherit}input[type=range]{width:100%}input[type=number],select{width:100%;background:#081524;color:var(--text);border:1px solid var(--border);border-radius:9px;padding:9px}button{border:1px solid var(--border);background:#10263d;color:var(--text);padding:9px 12px;border-radius:10px;cursor:pointer}button:hover{filter:brightness(1.15)}button.primary{background:linear-gradient(135deg,#0bb9dc,#1879d9);border:0}.buttons{display:flex;gap:8px;flex-wrap:wrap}.hour{font-size:30px;font-weight:800}.timeline{padding:0 16px 15px}.timeline input{accent-color:var(--accent)}.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px}.metric{padding:12px;border:1px solid var(--border);border-radius:12px;background:#09182a}.metric b{display:block;font-size:20px;margin-top:4px}.small{font-size:11px;color:var(--muted)}.charts{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}.chart{padding:12px;height:320px;min-height:320px;position:relative}.chart canvas{display:block}.chart canvas{width:100%!important;height:100%!important}.tablewrap{overflow:auto;padding:12px}table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:8px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:#b8d0e6}.info{padding:14px;color:#c7d7e7;line-height:1.55;font-size:13px}.badge{display:inline-block;padding:3px 7px;border-radius:999px;background:#17304a;color:#a9dfff;font-size:10px}.footer{padding:20px;color:var(--muted);text-align:center;font-size:12px}.hidden{display:none}@media(max-width:1050px){.grid{grid-template-columns:1fr}.scene{height:560px}}@media(max-width:700px){.charts{grid-template-columns:1fr}.row,.row3{grid-template-columns:1fr}.scene{height:500px}.wrap{padding:10px}}
+
+.presentation{margin-top:16px;padding:16px}.presentation-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.step{border:1px solid var(--border);border-radius:14px;padding:14px;background:#09182a;cursor:pointer;transition:.2s}.step:hover,.step.active{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 8px 22px #0004}.step .num{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#17304a;color:#fff;font-weight:800;margin-bottom:8px}.step h3{margin:0 0 6px;font-size:14px}.step p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}.present-view{border:1px solid var(--border);border-radius:16px;background:linear-gradient(145deg,#081827,#0d2940);padding:18px;min-height:285px;display:flex;flex-direction:column;justify-content:space-between}.present-icon{font-size:54px}.present-title{font-size:22px;font-weight:800;margin:6px 0}.present-text{color:#c9dced;line-height:1.6;font-size:14px}.progressbar{height:8px;background:#10263d;border-radius:99px;overflow:hidden;margin:12px 0}.progressbar>div{height:100%;width:16.66%;background:linear-gradient(90deg,#31d7ff,#50e3a4);transition:.3s}.illustrations{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}.illus{border:1px solid var(--border);border-radius:16px;background:#081624;padding:10px;text-align:center}.illus svg{width:100%;height:130px}.illus b{font-size:12px}.illus span{display:block;color:var(--muted);font-size:11px;margin-top:4px}.present-controls{display:flex;gap:8px;flex-wrap:wrap}.tagline{margin-top:8px;color:var(--muted);font-size:12px}@media(max-width:900px){.presentation-grid{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.illustrations{grid-template-columns:1fr 1fr}}@media(max-width:600px){.steps,.illustrations{grid-template-columns:1fr}}
+
+.microgrid-bg{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none;background:#06101c}
+.microgrid-bg svg{width:100%;height:100%;display:block;opacity:.42}
+.microgrid-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,12,22,.28),rgba(4,10,18,.78));}
+.body-glow{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 78% 18%,rgba(255,209,102,var(--sunGlow,.12)),transparent 22%),radial-gradient(circle at 15% 35%,rgba(49,199,255,var(--blueGlow,.10)),transparent 25%),radial-gradient(circle at 70% 78%,rgba(55,226,139,.08),transparent 25%);transition:background 1.2s ease,opacity 1.2s ease}
+.time-overlay{position:absolute;right:14px;top:14px;padding:9px 12px;border-radius:999px;background:rgba(4,12,22,.62);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);font-size:12px;font-weight:700;z-index:3;transition:.8s ease}
+.stars{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity 1.5s ease;background-image:radial-gradient(circle,rgba(255,255,255,.9) 1px,transparent 1.5px),radial-gradient(circle,rgba(160,210,255,.7) 1px,transparent 1.5px);background-size:110px 110px,170px 170px;background-position:20px 30px,70px 90px}
+.scene{background:linear-gradient(180deg,var(--skyTop,#071b2c),var(--skyMid,#0a2940) 55%,var(--skyBottom,#0a1928));transition:background 1.5s ease}
+.microgrid-bg svg{transition:filter 1.5s ease,opacity 1.5s ease}
+body{transition:background 1.5s ease}
+</style>
+</head>
+<body><div class="stars" id="stars"></div>
+<header><div class="brand"><div><h1>⚡ Microrred Híbrida 3D</h1><p>Solar · Eólica · Hidráulica · Batería · Demanda</p></div><div class="chips"><span class="chip">3D interactivo</span><span class="chip">24 horas</span><span class="chip">Simulación energética</span></div></div></header>
+<main class="wrap">
+<div class="grid">
+<section class="card"><h2>🌐 Simulación 3D interactiva</h2><div class="scene" id="scene"><div class="time-overlay" id="timeLabel">🌅 Amanecer · 06:00</div><div class="overlay"><div class="stat">Hora: <b id="hudHour">06:00</b></div><div class="stat">☀️ Solar: <b id="hudSolar">0.0 kW</b></div><div class="stat">🌬️ Eólica: <b id="hudWind">0.0 kW</b></div><div class="stat">💧 Hidráulica: <b id="hudHydro">0.0 kW</b></div><div class="stat">🔋 Batería: <b id="hudSoc">50%</b></div></div></div><div class="timeline"><input id="hour" type="range" min="0" max="23" value="6"><div class="buttons"><button id="play" class="primary">▶ Iniciar 24 h</button><button id="pause">⏸ Pausar</button><button id="reset">↺ Reiniciar</button><button id="follow">☀️ Seguir Sol</button><button id="explain">🔊 Explicar</button></div></div></section>
+<aside class="card"><h2>⚙️ Configuración</h2><div class="controls"><div class="row"><label>Capacidad batería (kWh)<input id="cap" type="number" value="100" min="1"></label><label>Estado inicial (%)<input id="soc0" type="number" value="50" min="0" max="100"></label></div><div class="row"><label>Eficiencia carga<input id="etaC" type="number" value="0.95" min="0.1" max="1" step="0.01"></label><label>Eficiencia descarga<input id="etaD" type="number" value="0.95" min="0.1" max="1" step="0.01"></label></div><div class="row3"><label>Solar máx. (kW)<input id="solarMax" type="number" value="55" min="0"></label><label>Eólica máx. (kW)<input id="windMax" type="number" value="35" min="0"></label><label>Hidráulica (kW)<input id="hydroMax" type="number" value="25" min="0"></label></div><div class="row"><label>Demanda base (kW)<input id="demandBase" type="number" value="45" min="0"></label><label>Velocidad viento (m/s)<input id="windSpeed" type="number" value="9" min="0" step="0.1"></label></div><div class="buttons"><button id="apply" class="primary">Aplicar configuración</button><button id="theme">🎨 Cambiar tema</button><button id="csv">⬇ Exportar CSV</button></div><div class="info"><b>Cómo funciona:</b> el Sol se desplaza durante el día y los paneles cambian su inclinación para orientarse hacia él. La turbina eólica gira según la velocidad del viento. La energía generada cubre la demanda y los excedentes cargan la batería; si falta energía, la batería descarga.</div></div><div class="metrics"><div class="metric">Generación total<b id="mGen">0.0 kW</b><span class="small">solar + eólica + hidráulica</span></div><div class="metric">Demanda<b id="mDem">0.0 kW</b><span class="small">consumo instantáneo</span></div><div class="metric">Balance<b id="mBal">0.0 kW</b><span class="small">positivo = excedente</span></div><div class="metric">SOC batería<b id="mSoc">50%</b><span class="small">estado de carga</span></div></div></aside>
+</div>
+<div class="charts"><section class="card chart"><h2>📈 Balance energético</h2><canvas id="energyChart"></canvas></section><section class="card chart"><h2>🔋 Comportamiento de batería</h2><canvas id="batteryChart"></canvas></section><section class="card chart"><h2>🏠 Demanda y generación</h2><canvas id="demandChart"></canvas></section><section class="card chart"><h2>🌱 Mezcla renovable</h2><canvas id="mixChart"></canvas></section></div>
+<section class="card" style="margin-top:16px"><h2>📋 Resultados por hora</h2><div class="tablewrap"><table><thead><tr><th>Hora</th><th>Solar</th><th>Eólica</th><th>Hidráulica</th><th>Generación</th><th>Demanda</th><th>Excedente</th><th>Déficit</th><th>Carga batería</th><th>SOC</th></tr></thead><tbody id="tbody"></tbody></table></div></section>
+
+<section class="card presentation" id="presentation">
+<h2>🎤 Modo presentación — explica el proyecto automáticamente</h2>
+<div class="info">Ideal para exponer frente al profesor. La aplicación puede avanzar paso a paso, resaltar cada elemento de la microrred y leer la explicación en voz alta.</div>
+<div class="presentation-grid">
+<div><div class="steps" id="steps">
+<div class="step active" data-step="0"><div class="num">1</div><h3>☀️ Generación solar</h3><p>Los paneles reciben la radiación solar y producen electricidad.</p></div>
+<div class="step" data-step="1"><div class="num">2</div><h3>🌬️ Generación eólica</h3><p>El viento hace girar las aspas del aerogenerador.</p></div>
+<div class="step" data-step="2"><div class="num">3</div><h3>💧 Generación hídrica</h3><p>El movimiento del agua aporta energía a la microrred.</p></div>
+<div class="step" data-step="3"><div class="num">4</div><h3>🏠 Demanda</h3><p>Se compara toda la generación con el consumo.</p></div>
+<div class="step" data-step="4"><div class="num">5</div><h3>🔋 Carga de batería</h3><p>El excedente se almacena cuando la generación supera la demanda.</p></div>
+<div class="step" data-step="5"><div class="num">6</div><h3>⚡ Descarga de batería</h3><p>Cuando hay déficit, la batería ayuda a cubrir la demanda.</p></div>
+</div></div>
+<div class="present-view"><div><div class="present-icon" id="presentIcon">☀️</div><div class="present-title" id="presentTitle">Paso 1: se genera energía solar</div><div class="present-text" id="presentText">Los paneles solares reciben la radiación del Sol. En la simulación 3D puedes observar cómo cambia su orientación durante el día y cómo aumenta o disminuye la generación.</div></div><div><div class="progressbar"><div id="presentProgress"></div></div><div class="present-controls"><button class="primary" id="presentPlay">▶ Iniciar presentación</button><button id="presentPrev">← Anterior</button><button id="presentNext">Siguiente →</button><button id="presentVoice">🔊 Leer explicación</button></div><div class="tagline" id="presentCounter">Paso 1 de 6</div></div></div>
+</div>
+<div class="illustrations">
+<div class="illus"><svg viewBox="0 0 220 130" aria-label="Ilustración solar"><circle cx="180" cy="25" r="18" fill="#ffd34d"/><g transform="translate(28 58) rotate(-10 70 25)"><rect x="0" y="0" width="140" height="48" rx="4" fill="#164b75" stroke="#5edfff"/><path d="M35 0v48M70 0v48M105 0v48M0 24h140" stroke="#8bdcff" opacity=".6"/><path d="M165 -10L120 20M155 12L112 30M150 35L105 40" stroke="#ffd34d" stroke-width="3"/></g></svg><b>Sol + paneles</b><span>Orientación solar dinámica</span></div>
+<div class="illus"><svg viewBox="0 0 220 130"><path d="M10 35c35-25 55 25 90 0s55 25 110-5" fill="none" stroke="#b879ff" stroke-width="5"/><line x1="110" y1="25" x2="110" y2="112" stroke="#dbe8f2" stroke-width="7"/><circle cx="110" cy="24" r="12" fill="#fff"/><g fill="#b879ff" transform="translate(110 24)"><path d="M0 0l-8-45 16 0z"/><path d="M0 0l39 22-8 14z"/><path d="M0 0l-31 35-12-10z"/></g></svg><b>Viento + eólica</b><span>Aspas según velocidad</span></div>
+<div class="illus"><svg viewBox="0 0 220 130"><path d="M0 35 C40 15 65 55 105 35 S175 55 220 30 L220 130 L0 130Z" fill="#17628a"/><circle cx="110" cy="78" r="28" fill="none" stroke="#72d8ff" stroke-width="8"/><path d="M110 50v56M82 78h56" stroke="#72d8ff" stroke-width="5"/></svg><b>Agua + turbina</b><span>Generación hidráulica</span></div>
+<div class="illus"><svg viewBox="0 0 220 130"><rect x="72" y="20" width="76" height="92" rx="9" fill="#163b38" stroke="#50e3a4" stroke-width="4"/><rect x="84" y="82" width="52" height="18" rx="3" fill="#50e3a4"/><path d="M110 10v10M95 10v10M125 10v10" stroke="#50e3a4" stroke-width="5"/><path d="M25 65h38M157 65h38" stroke="#31d7ff" stroke-width="5"/><path d="M45 58l-12 7 12 7M175 58l12 7-12 7" fill="none" stroke="#31d7ff" stroke-width="3"/></svg><b>Batería + demanda</b><span>Almacena o entrega energía</span></div>
+</div>
+</section>
+<section class="card" style="margin-top:16px"><h2>☁️ Google Sheets + correo</h2><div class="info">Esta versión deja preparada la simulación para conectarla a Google Apps Script. Coloca tu URL <span class="badge">/exec</span> en la constante <b>APPS_SCRIPT_URL</b> del código y podrás enviar los resultados a Google Sheets y por correo. No se incluyen claves privadas en el HTML.</div></section>
+<div class="footer">Microrred educativa 3D · Three.js + Chart.js · Puedes rotar la escena con el mouse y usar la rueda para acercar/alejar.</div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+const $=id=>document.getElementById(id); let scene,camera,renderer,controls,solarPanels=[],windBlades=[],water=[],particles=[],sun,simTimer=null,followSun=false,themeIndex=0;
+const themes=[['#07111f','#31d7ff'],['#06170f','#55e38c'],['#12081d','#c17cff'],['#1c0d08','#ff9f5a'],['#f3f7fb','#1479a5']];
+function num(id){return +$(id).value||0}
+function profiles(){let out=[];for(let h=0;h<24;h++){let sunP=Math.max(0,Math.sin(Math.PI*(h-6)/12));let solar=num('solarMax')*Math.pow(sunP,1.15);let ws=num('windSpeed')+3*Math.sin(h*.71)+1.5*Math.sin(h*1.9);let wind=num('windMax')*Math.min(1,Math.max(0,ws/14)**3);let hydro=num('hydroMax')*(.92+.08*Math.sin(h*.4));let demand=num('demandBase')*(.72+.18*Math.sin((h-7)*Math.PI/12)**2+.12*Math.max(0,Math.sin((h-17)*Math.PI/8)));out.push({h,solar,wind,hydro,demand,windSpeed:Math.max(0,ws),sunP});}return out}
+function simulate(){let p=profiles(),cap=num('cap'),soc=cap*num('soc0')/100,ec=num('etaC'),ed=num('etaD'),r=[];for(const x of p){let gen=x.solar+x.wind+x.hydro,bal=gen-x.demand,charge=0,discharge=0,deficit=0,excess=0;if(bal>=0){let room=cap-soc;charge=Math.min(bal,room/ec);soc+=charge*ec;excess=Math.max(0,bal-charge)}else{let need=-bal,avail=soc*ed;discharge=Math.min(need,avail);soc-=discharge/ed;deficit=Math.max(0,need-discharge)}r.push({...x,gen,bal,charge,discharge,excess,deficit,soc:cap?soc/cap*100:0});}return r}
+let data=simulate(),current=6;
+function init3D(){const el=$('scene');scene=new THREE.Scene();scene.fog=new THREE.Fog(0x071b2c,80,240);camera=new THREE.PerspectiveCamera(55,el.clientWidth/el.clientHeight,.1,500);camera.position.set(55,38,72);renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(el.clientWidth,el.clientHeight);renderer.shadowMap.enabled=true;el.prepend(renderer.domElement);controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(0,7,0);scene.add(new THREE.HemisphereLight(0x9fd7ff,0x102030,1.8));let dl=new THREE.DirectionalLight(0xffffff,3);dl.position.set(30,60,20);dl.castShadow=true;scene.add(dl);createGround();createSolar();createWind();createHydro();createBattery();createLoad();createController();createSun();createParticles();window.addEventListener('resize',resize);animate()}
+function mat(c,e=0){return new THREE.MeshStandardMaterial({color:c,metalness:.25,roughness:.42,emissive:e?c:0,emissiveIntensity:e?1.2:0})}
+function box(x,y,z,c){let m=new THREE.Mesh(new THREE.BoxGeometry(x,y,z),mat(c));m.castShadow=m.receiveShadow=true;return m}
+function createGround(){let g=new THREE.Mesh(new THREE.CylinderGeometry(95,95,1,64),mat(0x102536));g.position.y=-.5;g.receiveShadow=true;scene.add(g);for(let i=-90;i<=90;i+=15){let road=box(180,.05,.35,0x18354a);road.position.set(0,.02,i);scene.add(road)} }
+function createSolar(){let group=new THREE.Group();group.position.set(-32,1,2);let base=box(2,7,2,0x6b7785);base.position.y=3.5;group.add(base);for(let i=0;i<3;i++)for(let j=0;j<3;j++){let panel=new THREE.Mesh(new THREE.BoxGeometry(5.5,.18,3.1),mat(0x164b75,1));panel.position.set((i-1)*6.1,8,(j-1)*3.8);panel.rotation.x=-.45;panel.userData.baseY=panel.position.y;panel.castShadow=true;group.add(panel);solarPanels.push(panel)}let label=box(16,.5,5,0x0a2034);label.position.y=.3;group.add(label);scene.add(group);group.userData.type='solar'}
+function createWind(){let g=new THREE.Group();g.position.set(25,0,0);let tower=new THREE.Mesh(new THREE.CylinderGeometry(1.1,.45,22,20),mat(0xdbe8f2));tower.position.y=11;g.add(tower);let hub=new THREE.Mesh(new THREE.SphereGeometry(1.8,20,20),mat(0xffffff,1));hub.position.set(0,21,0);g.add(hub);let blades=new THREE.Group();for(let i=0;i<3;i++){let b=box(.55,9,.35,0xb879ff);b.position.y=4.7;b.rotation.z=.16;blades.add(b)}blades.position.set(0,21,0);windBlades.push(blades);g.add(blades);scene.add(g)}
+function createHydro(){let g=new THREE.Group();g.position.set(-3,0,-25);let tank=box(24,2,16,0x17628a);tank.position.y=.5;g.add(tank);for(let i=-8;i<=8;i+=4){let c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,7,12),mat(0x62c9ff,1));c.position.set(i,4,-2);g.add(c)}let wheel=new THREE.Mesh(new THREE.TorusGeometry(5,.65,16,32),mat(0x4ca7ff,1));wheel.rotation.x=Math.PI/2;wheel.position.set(0,5,4);g.add(wheel);scene.add(g)}
+function createBattery(){let g=new THREE.Group();g.position.set(5,0,20);let body=box(10,13,7,0x163b38);body.position.y=6.5;g.add(body);let top=box(4,1,3,0x50e3a4);top.position.y=13.5;g.add(top);let level=box(8,.25,5,0x50e3a4);level.position.set(0,2,0);g.add(level);g.userData.level=level;scene.add(g);window.batteryGroup=g}
+function createLoad(){let g=new THREE.Group();g.position.set(35,0,20);let h=box(13,9,10,0x31516b);h.position.y=4.5;g.add(h);let roof=new THREE.Mesh(new THREE.ConeGeometry(10,5,4),mat(0x24445b));roof.rotation.y=Math.PI/4;roof.position.y=11;g.add(roof);scene.add(g)}
+function createController(){let c=box(8,6,5,0x2c3440);c.position.set(0,3,8);scene.add(c)}
+function createSun(){sun=new THREE.Mesh(new THREE.SphereGeometry(4,32,32),mat(0xffc928,1));scene.add(sun)}
+function createParticles(){for(let i=0;i<80;i++){let q=new THREE.Mesh(new THREE.SphereGeometry(.16,8,8),mat(0x4de8ff,1));q.visible=false;scene.add(q);particles.push(q)}}
+function updateTimeEnvironment(h){
+  const root=document.documentElement;
+  let phase,top,mid,bottom,body1,body2,sunGlow,blueGlow,stars,svgOpacity,filter;
+  if(h>=5 && h<7){
+    phase='🌅 Amanecer'; top='#9b5b55'; mid='#d58a58'; bottom='#18283a'; body1='#3b2631'; body2='#0b1725'; sunGlow='.20'; blueGlow='.06'; stars='.18'; svgOpacity='.48'; filter='brightness(.82) saturate(1.08)';
+  }else if(h>=7 && h<17){
+    phase='☀️ Día'; top='#1674ad'; mid='#2b9cc6'; bottom='#14304a'; body1='#173e62'; body2='#07111f'; sunGlow='.18'; blueGlow='.12'; stars='0'; svgOpacity='.48'; filter='brightness(1) saturate(1.08)';
+  }else if(h>=17 && h<20){
+    phase='🌇 Atardecer'; top='#7d405f'; mid='#d06b4f'; bottom='#182238'; body1='#321d2e'; body2='#0b1320'; sunGlow='.23'; blueGlow='.05'; stars='.22'; svgOpacity='.42'; filter='brightness(.78) saturate(1.18)';
+  }else{
+    phase='🌙 Noche'; top='#050a18'; mid='#0b1630'; bottom='#050b15'; body1='#030712'; body2='#02050b'; sunGlow='.03'; blueGlow='.03'; stars='1'; svgOpacity='.30'; filter='brightness(.48) saturate(.78)';
+  }
+  root.style.setProperty('--skyTop',top);root.style.setProperty('--skyMid',mid);root.style.setProperty('--skyBottom',bottom);
+  root.style.setProperty('--sunGlow',sunGlow);root.style.setProperty('--blueGlow',blueGlow);
+  root.style.setProperty('--starsOpacity',stars);
+  document.body.style.background=`radial-gradient(circle at 50% -10%,${body1} 0,#07111f 48%,${body2} 100%)`;
+  const starEl=$('stars'); if(starEl) starEl.style.opacity=stars;
+  const bg=$('.microgrid-bg'); if(bg) bg.style.background=body2;
+  const svg=document.querySelector('.microgrid-bg svg'); if(svg){svg.style.opacity=svgOpacity;svg.style.filter=filter;}
+  const label=$('timeLabel'); if(label) label.textContent=`${phase} · ${String(h).padStart(2,'0')}:00`;
+}
+function update3D(d){let angle=Math.PI*(d.h-6)/12;let daylight=Math.max(0,Math.sin(angle));let sx=Math.cos(angle)*55, sy=12+daylight*52, sz=-25+Math.sin(angle)*15;sun.position.set(sx,sy,sz);updateTimeEnvironment(d.h);solarPanels.forEach((p,i)=>{p.rotation.x=-.62+(.82*d.sunP);p.rotation.y=-Math.sin(angle)*.18+Math.sin(d.h*.18+i)*.025;p.rotation.z=Math.cos(angle)*.05});windBlades.forEach(b=>b.rotation.z+=.035+d.windSpeed*.012);window.batteryGroup.userData.level.scale.y=Math.max(.05,d.soc/100);window.batteryGroup.userData.level.position.y=2+(d.soc/100)*5;let count=Math.min(80,Math.round((d.solar+d.wind+d.hydro)*1.1));particles.forEach((q,i)=>{q.visible=i<count;if(q.visible){let t=(performance.now()/1000+i*.08)%1;q.position.lerpVectors(new THREE.Vector3(-25,9,2),new THREE.Vector3(0,4,8),t);if(i%3===1)q.position.lerpVectors(new THREE.Vector3(25,21,0),new THREE.Vector3(0,4,8),t);if(i%3===2)q.position.lerpVectors(new THREE.Vector3(-3,5,-20),new THREE.Vector3(0,4,8),t)}});if(followSun){camera.lookAt(sun.position)}}
+function animate(){requestAnimationFrame(animate);if(data[current])update3D(data[current]);controls.update();renderer.render(scene,camera)}
+function resize(){let el=$('scene');camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix();renderer.setSize(el.clientWidth,el.clientHeight)}
+let charts={};
+function chartsInit(){
+  const labels=data.map(x=>String(x.h).padStart(2,'0')+':00');
+  const common={responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:'#cfe2f4'}}},scales:{x:{ticks:{color:'#9bb0c6'},grid:{color:'#19324a'}},y:{beginAtZero:true,ticks:{color:'#9bb0c6'},grid:{color:'#19324a'}}}};
+  try{
+    if(typeof Chart==='undefined') throw new Error('Chart.js no está disponible');
+    charts.energy=new Chart($('energyChart'),{type:'line',data:{labels,datasets:[ds('☀️ Solar',data.map(x=>x.solar),'#ffd34d'),ds('🌬️ Eólica',data.map(x=>x.wind),'#b879ff'),ds('💧 Hidráulica',data.map(x=>x.hydro),'#4ca7ff'),ds('🏠 Demanda',data.map(x=>x.demand),'#ff637e')]},options:common});
+    charts.battery=new Chart($('batteryChart'),{type:'line',data:{labels,datasets:[ds('🔋 SOC %',data.map(x=>x.soc),'#50e3a4'),ds('⬆ Carga',data.map(x=>x.charge),'#31d7ff'),ds('⬇ Descarga',data.map(x=>x.discharge),'#ff9f5a')]},options:common});
+    charts.demand=new Chart($('demandChart'),{type:'bar',data:{labels,datasets:[ds('Generación',data.map(x=>x.gen),'#4ca7ff','bar'),ds('Demanda',data.map(x=>x.demand),'#ff637e','bar')]},options:common});
+    charts.mix=new Chart($('mixChart'),{type:'doughnut',data:{labels:['Solar','Eólica','Hidráulica'],datasets:[{data:[sum('solar'),sum('wind'),sum('hydro')],backgroundColor:['#ffd34d','#b879ff','#4ca7ff'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#cfe2f4'}}}}});
+  }catch(err){
+    console.warn(err); drawFallbackCharts();
+  }
+}
+function drawFallbackCharts(){
+  drawLineFallback($('energyChart'),['Solar','Eólica','Hidráulica','Demanda'],[data.map(x=>x.solar),data.map(x=>x.wind),data.map(x=>x.hydro),data.map(x=>x.demand)],['#ffd34d','#b879ff','#4ca7ff','#ff637e'],'Potencia (kW)');
+  drawLineFallback($('batteryChart'),['SOC (%)','Carga','Descarga'],[data.map(x=>x.soc),data.map(x=>x.charge),data.map(x=>x.discharge)],['#50e3a4','#31d7ff','#ff9f5a'],'Batería');
+  drawLineFallback($('demandChart'),['Generación','Demanda'],[data.map(x=>x.gen),data.map(x=>x.demand)],['#4ca7ff','#ff637e'],'kW');
+  drawDonutFallback($('mixChart'),[sum('solar'),sum('wind'),sum('hydro')],['#ffd34d','#b879ff','#4ca7ff'],['Solar','Eólica','Hidráulica']);
+}
+function svgBase(el){el.replaceWith(el.cloneNode(false));let n=el.parentElement.querySelector('canvas:last-child');return n}
+function drawLineFallback(canvas, names, series, colors, yTitle){
+  const w=canvas.clientWidth||600,h=canvas.clientHeight||270;canvas.width=w*2;canvas.height=h*2;const c=canvas.getContext('2d');c.scale(2,2);c.clearRect(0,0,w,h);c.fillStyle='#09182a';c.fillRect(0,0,w,h);const pad={l:46,r:18,t:34,b:38};const iw=w-pad.l-pad.r,ih=h-pad.t-pad.b;const max=Math.max(1,...series.flat())*1.12;
+  c.strokeStyle='#19324a';c.lineWidth=1;c.font='11px system-ui';c.fillStyle='#9bb0c6';c.textAlign='right';
+  for(let j=0;j<=4;j++){let y=pad.t+ih*j/4;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillText((max*(1-j/4)).toFixed(0),pad.l-7,y+4)}
+  c.textAlign='center';for(let i=0;i<24;i+=3){let x=pad.l+iw*i/23;c.fillText(String(i).padStart(2,'0')+':00',x,h-13)}
+  series.forEach((arr,k)=>{c.strokeStyle=colors[k];c.lineWidth=2.5;c.beginPath();arr.forEach((v,i)=>{let x=pad.l+iw*i/23,y=pad.t+ih*(1-v/max);i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke()});
+  c.textAlign='left';let lx=pad.l;names.forEach((n,k)=>{c.fillStyle=colors[k];c.fillRect(lx,10,12,3);c.fillText(n,lx+16,14);lx+=Math.max(90,n.length*7+35)});
+}
+function drawDonutFallback(canvas,vals,colors,names){const w=canvas.clientWidth||600,h=canvas.clientHeight||270;canvas.width=w*2;canvas.height=h*2;const c=canvas.getContext('2d');c.scale(2,2);c.clearRect(0,0,w,h);c.fillStyle='#09182a';c.fillRect(0,0,w,h);const total=vals.reduce((a,b)=>a+b,0)||1;let a=-Math.PI/2;const cx=w*.38,cy=h*.52,r=Math.min(w,h)*.30;c.lineWidth=r*.42;vals.forEach((v,i)=>{const da=v/total*Math.PI*2;c.beginPath();c.strokeStyle=colors[i];c.arc(cx,cy,r,a,a+da);c.stroke();a+=da});c.fillStyle='#edf6ff';c.font='700 18px system-ui';c.textAlign='center';c.fillText('Energía',cx,cy-2);c.font='12px system-ui';c.fillStyle='#9bb0c6';c.fillText('renovable',cx,cy+16);c.textAlign='left';names.forEach((n,i)=>{let y=48+i*28;c.fillStyle=colors[i];c.fillRect(w*.65,y-8,12,12);c.fillStyle='#cfe2f4';c.fillText(n,w*.65+20,y+2);c.fillText(vals[i].toFixed(1)+' kWh',w*.65+20,y+18)});}
+function ds(label,data,color,type='line'){return {label,data,borderColor:color,backgroundColor:color,borderWidth:2,fill:false,tension:.28,pointRadius:2,type}}function sum(k){return data.reduce((a,x)=>a+x[k],0)}
+function renderTable(){ $('tbody').innerHTML=data.map(x=>`<tr><td>${String(x.h).padStart(2,'0')}:00</td><td>${x.solar.toFixed(1)}</td><td>${x.wind.toFixed(1)}</td><td>${x.hydro.toFixed(1)}</td><td>${x.gen.toFixed(1)}</td><td>${x.demand.toFixed(1)}</td><td>${x.excess.toFixed(1)}</td><td>${x.deficit.toFixed(1)}</td><td>${(x.charge-x.discharge).toFixed(1)}</td><td>${x.soc.toFixed(1)}%</td></tr>`).join('')}
+function updateUI(){let d=data[current];$('hour').value=current;$('hudHour').textContent=String(d.h).padStart(2,'0')+':00';$('hudSolar').textContent=d.solar.toFixed(1)+' kW';$('hudWind').textContent=d.wind.toFixed(1)+' kW';$('hudHydro').textContent=d.hydro.toFixed(1)+' kW';$('hudSoc').textContent=d.soc.toFixed(1)+'%';$('mGen').textContent=d.gen.toFixed(1)+' kW';$('mDem').textContent=d.demand.toFixed(1)+' kW';$('mBal').textContent=d.bal.toFixed(1)+' kW';$('mSoc').textContent=d.soc.toFixed(1)+'%'}
+function rebuild(){data=simulate();current=Math.min(current,23);updateUI();renderTable();charts.energy.data.datasets[0].data=data.map(x=>x.solar);charts.energy.data.datasets[1].data=data.map(x=>x.wind);charts.energy.data.datasets[2].data=data.map(x=>x.hydro);charts.energy.data.datasets[3].data=data.map(x=>x.demand);charts.battery.data.datasets[0].data=data.map(x=>x.soc);charts.battery.data.datasets[1].data=data.map(x=>x.charge);charts.battery.data.datasets[2].data=data.map(x=>x.discharge);charts.demand.data.datasets[0].data=data.map(x=>x.gen);charts.demand.data.datasets[1].data=data.map(x=>x.demand);charts.mix.data.datasets[0].data=[sum('solar'),sum('wind'),sum('hydro')];Object.values(charts).forEach(c=>c.update())}
+function speech(){let d=data[current],msg=`Son las ${d.h} horas. Los paneles solares producen ${d.solar.toFixed(1)} kilovatios y se orientan hacia el Sol. La energía eólica es de ${d.wind.toFixed(1)} kilovatios, con una velocidad aproximada de ${d.windSpeed.toFixed(1)} metros por segundo. La hidráulica aporta ${d.hydro.toFixed(1)} kilovatios. La demanda es de ${d.demand.toFixed(1)} kilovatios y la batería está al ${d.soc.toFixed(0)} por ciento.`;speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(msg))}
+function csv(){let lines=['Hora,Solar kW,Eolica kW,Hidraulica kW,Generacion kW,Demanda kW,Excedente kW,Deficit kW,Carga kWh,Descarga kWh,SOC %'];data.forEach(x=>lines.push(`${x.h},${x.solar.toFixed(2)},${x.wind.toFixed(2)},${x.hydro.toFixed(2)},${x.gen.toFixed(2)},${x.demand.toFixed(2)},${x.excess.toFixed(2)},${x.deficit.toFixed(2)},${x.charge.toFixed(2)},${x.discharge.toFixed(2)},${x.soc.toFixed(2)}`));let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));a.download='simulacion_microrred_3D.csv';a.click()}
+$('hour').oninput=e=>{current=+e.target.value;updateUI()};$('apply').onclick=rebuild;$('reset').onclick=()=>{current=6;$('hour').value=6;updateUI()};$('follow').onclick=()=>{followSun=!followSun;controls.enabled=!followSun;$('follow').textContent=followSun?'☀️ Sol activo':'☀️ Seguir Sol'};$('explain').onclick=speech;$('csv').onclick=csv;$('play').onclick=()=>{clearInterval(simTimer);simTimer=setInterval(()=>{current=(current+1)%24;updateUI()},900)};$('pause').onclick=()=>clearInterval(simTimer);$('theme').onclick=()=>{themeIndex=(themeIndex+1)%themes.length;document.documentElement.style.setProperty('--bg',themes[themeIndex][0]);document.documentElement.style.setProperty('--accent',themes[themeIndex][1])};
+
+const presentationSteps=[
+{icon:'☀️',title:'Paso 1: se genera energía solar',text:'Los paneles solares reciben la radiación del Sol. En la escena 3D se orientan hacia el Sol y su producción cambia con la hora.'},
+{icon:'🌬️',title:'Paso 2: se suma la energía eólica',text:'El viento hace girar las aspas del aerogenerador. Una mayor velocidad del viento representa una mayor producción dentro del modelo.'},
+{icon:'💧',title:'Paso 3: se incorpora la generación hídrica',text:'La turbina hidráulica representa el aprovechamiento del movimiento del agua para producir electricidad y complementar las fuentes solar y eólica.'},
+{icon:'🏠',title:'Paso 4: se compara con la demanda',text:'La generación total se compara con el consumo. Si la generación es mayor, existe excedente; si es menor, aparece un déficit.'},
+{icon:'🔋',title:'Paso 5: el excedente carga la batería',text:'Cuando sobra energía, la batería almacena una parte del excedente respetando su capacidad y la eficiencia de carga.'},
+{icon:'⚡',title:'Paso 6: la batería ayuda ante un déficit',text:'Cuando la generación no alcanza para cubrir la demanda, la batería entrega energía hasta donde permita su estado de carga y eficiencia.'}
+];
+let presentStep=0,presentTimer=null;
+let chartAnimToken=0;
+function animatePresentationCharts(targetHour){
+  const token=++chartAnimToken;
+  const target=Math.max(0,Math.min(23,targetHour));
+  const duration=2300;
+  const start=performance.now();
+  const keys=[['energy',['solar','wind','hydro','demand']],['battery',['soc','charge','discharge']],['demand',['gen','demand']]];
+  if(typeof Chart!=='undefined' && charts.energy){
+    Object.entries(charts).forEach(([name,ch])=>{
+      if(name==='mix') return;
+      ch.data.datasets.forEach(ds=>{ds.data=data.map(()=>null);});
+      ch.update('none');
+    });
+    function frame(now){
+      if(token!==chartAnimToken) return;
+      const p=Math.min(1,(now-start)/duration);
+      const eased=1-Math.pow(1-p,3);
+      const upto=Math.min(target,Math.floor(target*eased));
+      keys.forEach(([name,fields])=>{
+        const ch=charts[name];
+        fields.forEach((field,j)=>{if(ch&&ch.data.datasets[j]) ch.data.datasets[j].data=data.map((x,i)=>i<=upto?x[field]:null);});
+        if(ch) ch.update('none');
+      });
+      if(charts.mix){
+        const vals=['solar','wind','hydro'].map(k=>data.slice(0,upto+1).reduce((a,x)=>a+x[k],0));
+        charts.mix.data.datasets[0].data=vals; charts.mix.update('none');
+      }
+      if(p<1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  } else {
+    // Fallback canvas: redraw progressively when Chart.js is unavailable.
+    const startFallback=performance.now();
+    function fallbackFrame(now){
+      if(token!==chartAnimToken) return;
+      const p=Math.min(1,(now-startFallback)/duration), upto=Math.min(target,Math.floor(target*p));
+      const slice=a=>a.map((v,i)=>i<=upto?v:NaN);
+      drawLineFallback($('energyChart'),['Solar','Eólica','Hidráulica','Demanda'],[slice(data.map(x=>x.solar)),slice(data.map(x=>x.wind)),slice(data.map(x=>x.hydro)),slice(data.map(x=>x.demand))],['#ffd34d','#b879ff','#4ca7ff','#ff637e'],'Potencia (kW)');
+      drawLineFallback($('batteryChart'),['SOC (%)','Carga','Descarga'],[slice(data.map(x=>x.soc)),slice(data.map(x=>x.charge)),slice(data.map(x=>x.discharge))],['#50e3a4','#31d7ff','#ff9f5a'],'Batería');
+      drawLineFallback($('demandChart'),['Generación','Demanda'],[slice(data.map(x=>x.gen)),slice(data.map(x=>x.demand))],['#4ca7ff','#ff637e'],'kW');
+      drawDonutFallback($('mixChart'),[data.slice(0,upto+1).reduce((a,x)=>a+x.solar,0),data.slice(0,upto+1).reduce((a,x)=>a+x.wind,0),data.slice(0,upto+1).reduce((a,x)=>a+x.hydro,0)],['#ffd34d','#b879ff','#4ca7ff'],['Solar','Eólica','Hidráulica']);
+      if(p<1) requestAnimationFrame(fallbackFrame);
+    }
+    requestAnimationFrame(fallbackFrame);
+  }
+}
+function showPresentStep(i,voice=false){presentStep=(i+presentationSteps.length)%presentationSteps.length;const st=presentationSteps[presentStep];$('presentIcon').textContent=st.icon;$('presentTitle').textContent=st.title;$('presentText').textContent=st.text;$('presentCounter').textContent=`Paso ${presentStep+1} de ${presentationSteps.length}`;$('presentProgress').style.width=((presentStep+1)/presentationSteps.length*100)+'%';document.querySelectorAll('.step').forEach((e,j)=>e.classList.toggle('active',j===presentStep));current=[6,9,12,15,18,21][presentStep];updateUI();animatePresentationCharts(current);if(voice){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(st.title+'. '+st.text));}}
+function startPresentation(){clearInterval(presentTimer);showPresentStep(presentStep,true);presentTimer=setInterval(()=>{if(presentStep===presentationSteps.length-1){clearInterval(presentTimer);$('presentPlay').textContent='▶ Repetir presentación';return}showPresentStep(presentStep+1,true)},4500);$('presentPlay').textContent='⏸ Presentación activa';}
+$('presentNext').onclick=()=>showPresentStep(presentStep+1);$('presentPrev').onclick=()=>showPresentStep(presentStep-1);$('presentVoice').onclick=()=>showPresentStep(presentStep,true);$('presentPlay').onclick=()=>{if(presentTimer){clearInterval(presentTimer);presentTimer=null;$('presentPlay').textContent='▶ Continuar presentación'}else startPresentation()};document.querySelectorAll('.step').forEach(e=>e.onclick=()=>{clearInterval(presentTimer);presentTimer=null;showPresentStep(+e.dataset.step)});
+
+init3D();chartsInit();renderTable();updateUI();showPresentStep(0);
+</script></body></html>
