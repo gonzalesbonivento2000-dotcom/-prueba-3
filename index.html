@@ -1,200 +1,1582 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Microrred Híbrida 3D — Solar · Eólica · Hidráulica · Batería</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Microrred Híbrida 3D — Solar · Eólica · Hidráulica · Batería · Clima</title>
 <style>
-:root{--bg:#07111f;--panel:#0e1b2d;--panel2:#12243a;--text:#edf6ff;--muted:#9bb0c6;--accent:#31d7ff;--sun:#ffd34d;--wind:#b879ff;--hydro:#4ca7ff;--bat:#50e3a4;--danger:#ff637e;--border:#23405d}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#173e62 0,#07111f 45%,#040a12 100%);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}header{padding:18px 22px;border-bottom:1px solid var(--border);background:#081525dd;backdrop-filter:blur(12px);position:sticky;top:0;z-index:10}.brand{display:flex;justify-content:space-between;gap:15px;align-items:center}.brand h1{font-size:clamp(20px,3vw,32px);margin:0}.brand p{margin:4px 0 0;color:var(--muted);font-size:13px}.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{padding:7px 10px;border:1px solid var(--border);border-radius:999px;background:#0b192a;font-size:12px}.wrap{max-width:1500px;margin:auto;padding:18px}.grid{display:grid;grid-template-columns:1.55fr .75fr;gap:16px}.card{background:linear-gradient(145deg,#0e1b2d,#0a1524);border:1px solid var(--border);border-radius:18px;box-shadow:0 12px 35px #0005;overflow:hidden}.card h2{font-size:16px;margin:0;padding:15px 16px;border-bottom:1px solid var(--border)}.scene{height:650px;position:relative;background:linear-gradient(#071b2c,#0a2940 55%,#0a1928);}.scene canvas{display:block;width:100%;height:100%}.overlay{position:absolute;left:14px;top:14px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}.stat{background:#071525cc;border:1px solid #31506c;border-radius:12px;padding:8px 11px;font-size:12px;backdrop-filter:blur(8px)}.controls{padding:14px;display:grid;gap:12px}.row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}label{font-size:12px;color:var(--muted);display:grid;gap:5px}input,select,button{font:inherit}input[type=range]{width:100%}input[type=number],select{width:100%;background:#081524;color:var(--text);border:1px solid var(--border);border-radius:9px;padding:9px}button{border:1px solid var(--border);background:#10263d;color:var(--text);padding:9px 12px;border-radius:10px;cursor:pointer}button:hover{filter:brightness(1.15)}button.primary{background:linear-gradient(135deg,#0bb9dc,#1879d9);border:0}.buttons{display:flex;gap:8px;flex-wrap:wrap}.hour{font-size:30px;font-weight:800}.timeline{padding:0 16px 15px}.timeline input{accent-color:var(--accent)}.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px}.metric{padding:12px;border:1px solid var(--border);border-radius:12px;background:#09182a}.metric b{display:block;font-size:20px;margin-top:4px}.small{font-size:11px;color:var(--muted)}.charts{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}.chart{padding:12px;height:320px;min-height:320px;position:relative}.chart canvas{display:block}.chart canvas{width:100%!important;height:100%!important}.tablewrap{overflow:auto;padding:12px}table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:8px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:#b8d0e6}.info{padding:14px;color:#c7d7e7;line-height:1.55;font-size:13px}.badge{display:inline-block;padding:3px 7px;border-radius:999px;background:#17304a;color:#a9dfff;font-size:10px}.footer{padding:20px;color:var(--muted);text-align:center;font-size:12px}.hidden{display:none}@media(max-width:1050px){.grid{grid-template-columns:1fr}.scene{height:560px}}@media(max-width:700px){.charts{grid-template-columns:1fr}.row,.row3{grid-template-columns:1fr}.scene{height:500px}.wrap{padding:10px}}
+:root{--text:#edf6ff;--muted:#9bb0c6;--accent:#31d7ff;--border:#23405d;
+  --card:linear-gradient(145deg,#0e1b2d,#0a1524);--primary:linear-gradient(135deg,#0bb9dc,#1879d9);
+  --sky-top:#2c2f63;--sky-mid:#c77a6b;--sky-bottom:#e7a76a;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(circle at 50% -10%,#173e62 0,#07111f 45%,#040a12 100%);color:var(--text);
+  font-family:Inter,system-ui,"Segoe UI",Arial,sans-serif;min-height:100vh;transition:background 1.2s ease}
+header{padding:16px 22px;border-bottom:1px solid var(--border);background:#081525dd;backdrop-filter:blur(12px);position:sticky;top:0;z-index:10}
+.brand{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}
+.brand h1{font-size:clamp(20px,3vw,30px);margin:0}
+.brand p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:#0b192a;font-size:12px}
+.wrap{max-width:1500px;margin:auto;padding:18px}
+.grid{display:grid;grid-template-columns:1.6fr .8fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 12px 35px rgba(0,0,0,.45);overflow:hidden;margin-top:16px}
+.grid .card{margin-top:0}
+.card h2{font-size:16px;margin:0;padding:15px 16px;border-bottom:1px solid var(--border)}
+.scene{height:640px;position:relative;background:linear-gradient(180deg,var(--sky-top),var(--sky-mid) 55%,var(--sky-bottom));transition:background 1.2s ease}
+.scene canvas{display:block;width:100%;height:100%}
+.overlay{position:absolute;left:12px;top:12px;display:flex;gap:6px;overflow-x:auto;max-width:calc(100% - 24px);pointer-events:none;scrollbar-width:none;z-index:2}
+.overlay::-webkit-scrollbar{display:none}
+.stat{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;background:#071525cc;border:1px solid #31506c;border-radius:12px;padding:7px 10px;font-size:12px;backdrop-filter:blur(8px)}
+.stat small{opacity:.6}
+.time-overlay{position:absolute;right:12px;top:12px;padding:8px 12px;border-radius:999px;background:rgba(4,12,22,.65);border:1px solid rgba(255,255,255,.16);font-size:12px;font-weight:700;z-index:3}
+.scene-loading{position:absolute;inset:0;display:grid;place-items:center;background:#2c2f63;z-index:5;transition:opacity .4s;text-align:center}
+.scene-loading.hidden{opacity:0;pointer-events:none}
+.scene-loading p{color:var(--muted);font-size:13px;margin-top:14px}
+.spinner{width:40px;height:40px;margin:auto;border-radius:50%;border:3px solid rgba(49,215,255,.2);border-top-color:var(--accent);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.timeline{padding:12px 16px 15px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.controls{padding:14px;display:grid;gap:12px}
+.row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+label{font-size:12px;color:var(--muted);display:grid;gap:5px}
+input[type=number],input[type=email],select{width:100%;background:#081524;color:var(--text);border:1px solid var(--border);border-radius:9px;padding:9px;font:inherit}
+input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(49,215,255,.15)}
+button{font:inherit;border:1px solid var(--border);background:#10263d;color:var(--text);padding:9px 12px;border-radius:10px;cursor:pointer;transition:filter .2s,transform .15s}
+button:hover{filter:brightness(1.15)}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--primary);border:0;font-weight:600}
+.buttons{display:flex;gap:8px;flex-wrap:wrap}
+.info{padding:14px;color:#c7d7e7;line-height:1.55;font-size:13px}
+.weathernow{margin:0 14px 14px;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#09182a;font-size:13px}
+.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px}
+.metric{padding:12px;border:1px solid var(--border);border-radius:12px;background:#09182a}
+.metric b{display:block;font-size:20px;margin-top:4px}
+.small{font-size:11px;color:var(--muted)}
+.charts{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+.charts .card{margin-top:0}
+.cbox{position:relative;height:320px;padding:12px}
+.tablewrap{overflow:auto;padding:12px;max-height:440px}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{padding:8px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{position:sticky;top:0;background:#0d2032;color:#b8d0e6}
+tbody tr{cursor:pointer}
+tbody tr.active{background:rgba(49,215,255,.1);box-shadow:inset 3px 0 var(--accent)}
+.footer{padding:20px;color:var(--muted);text-align:center;font-size:12px}
+@media(max-width:1050px){.grid{grid-template-columns:1fr}.scene{height:540px}}
+@media(max-width:700px){.charts{grid-template-columns:1fr}.row{grid-template-columns:1fr}.scene{height:440px}.wrap{padding:10px}.cbox{height:280px}}
+@media print{header,.charts,aside,.buttons,.timeline,.footer{display:none!important}.card{border:1px solid #999;box-shadow:none}}
+body.light{background:#eef4fa;color:#0b1a2a;--text:#0b1a2a;--muted:#4a5c72;--border:#d0dce8;--card:#fff}
+body.light header{background:#ffffffdd}
+body.light .metric,body.light .stat,body.light .weathernow{background:#f4f8fc;color:#0b1a2a}
+body.light .chip,body.light button{background:#e8f1fa;color:#0b1a2a}
+body.light input[type=number],body.light input[type=email],body.light select{background:#fff;color:#0b1a2a}
+body.light thead th{background:#e8f1fa;color:#0b1a2a}
+body.light .info{color:#2a3c50}
 
-.presentation{margin-top:16px;padding:16px}.presentation-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.step{border:1px solid var(--border);border-radius:14px;padding:14px;background:#09182a;cursor:pointer;transition:.2s}.step:hover,.step.active{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 8px 22px #0004}.step .num{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#17304a;color:#fff;font-weight:800;margin-bottom:8px}.step h3{margin:0 0 6px;font-size:14px}.step p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}.present-view{border:1px solid var(--border);border-radius:16px;background:linear-gradient(145deg,#081827,#0d2940);padding:18px;min-height:285px;display:flex;flex-direction:column;justify-content:space-between}.present-icon{font-size:54px}.present-title{font-size:22px;font-weight:800;margin:6px 0}.present-text{color:#c9dced;line-height:1.6;font-size:14px}.progressbar{height:8px;background:#10263d;border-radius:99px;overflow:hidden;margin:12px 0}.progressbar>div{height:100%;width:16.66%;background:linear-gradient(90deg,#31d7ff,#50e3a4);transition:.3s}.illustrations{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}.illus{border:1px solid var(--border);border-radius:16px;background:#081624;padding:10px;text-align:center}.illus svg{width:100%;height:130px}.illus b{font-size:12px}.illus span{display:block;color:var(--muted);font-size:11px;margin-top:4px}.present-controls{display:flex;gap:8px;flex-wrap:wrap}.tagline{margin-top:8px;color:var(--muted);font-size:12px}@media(max-width:900px){.presentation-grid{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.illustrations{grid-template-columns:1fr 1fr}}@media(max-width:600px){.steps,.illustrations{grid-template-columns:1fr}}
+/* ===== SLIDERS ===== */
+.slider-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.slider-val{min-width:64px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;
+  color:var(--accent);font-size:12px;background:#081524;border:1px solid var(--border);
+  border-radius:8px;padding:6px 8px}
+body.light .slider-val{background:#fff;color:#1879d9}
+input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:99px;
+  background:linear-gradient(90deg,#0bb9dc,#1879d9) 0/var(--fill,50%) 100% no-repeat,#0b1b2a;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#9fe9ff,#0bb9dc 60%,#1879d9);border:2px solid #fff;
+  box-shadow:0 0 12px rgba(49,215,255,.8);transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#9fe9ff,#0bb9dc 60%,#1879d9);border:2px solid #fff;
+  box-shadow:0 0 12px rgba(49,215,255,.8)}
+body.light input[type=range]{background:linear-gradient(90deg,#0bb9dc,#1879d9) 0/var(--fill,50%) 100% no-repeat,#e8f1fa}
+.section-title{font-weight:700;color:var(--text);font-size:12px;text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
 
-.microgrid-bg{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none;background:#06101c}
-.microgrid-bg svg{width:100%;height:100%;display:block;opacity:.42}
-.microgrid-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,12,22,.28),rgba(4,10,18,.78));}
-.body-glow{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 78% 18%,rgba(255,209,102,var(--sunGlow,.12)),transparent 22%),radial-gradient(circle at 15% 35%,rgba(49,199,255,var(--blueGlow,.10)),transparent 25%),radial-gradient(circle at 70% 78%,rgba(55,226,139,.08),transparent 25%);transition:background 1.2s ease,opacity 1.2s ease}
-.time-overlay{position:absolute;right:14px;top:14px;padding:9px 12px;border-radius:999px;background:rgba(4,12,22,.62);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);font-size:12px;font-weight:700;z-index:3;transition:.8s ease}
-.stars{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity 1.5s ease;background-image:radial-gradient(circle,rgba(255,255,255,.9) 1px,transparent 1.5px),radial-gradient(circle,rgba(160,210,255,.7) 1px,transparent 1.5px);background-size:110px 110px,170px 170px;background-position:20px 30px,70px 90px}
-.scene{background:linear-gradient(180deg,var(--skyTop,#071b2c),var(--skyMid,#0a2940) 55%,var(--skyBottom,#0a1928));transition:background 1.5s ease}
-.microgrid-bg svg{transition:filter 1.5s ease,opacity 1.5s ease}
-body{transition:background 1.5s ease}
+/* ===== ASISTENTE (CHAT) ===== */
+#ecoChatToggle, #ecoChatPanel {
+  --eco-primary: #31d7ff; --eco-bg-2: #0e2135;
+  --eco-bubble-bot: #1a3450; --eco-bubble-user: linear-gradient(135deg, #0bb9dc, #1879d9);
+  --eco-text: #eaf3fb; --eco-muted: #8fa8c0; --eco-border: rgba(73, 130, 180, 0.28);
+  --eco-radius: 18px; --eco-shadow: 0 24px 60px rgba(0, 10, 20, 0.55), 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+#ecoChatToggle{position:fixed;right:24px;bottom:24px;width:62px;height:62px;border-radius:50%;border:0;
+  cursor:pointer;z-index:9998;font-size:26px;color:#fff;background:linear-gradient(135deg,#0bb9dc,#1879d9);
+  box-shadow:0 10px 28px rgba(11,185,220,.45);display:grid;place-items:center;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease;animation:ecoPulse 2.6s ease-out infinite}
+#ecoChatToggle:hover{transform:scale(1.1) rotate(-6deg)}
+#ecoChatToggle:active{transform:scale(.94)}
+#ecoChatToggle .eco-chat-icon{display:inline-block;animation:ecoBounce 3.4s ease-in-out infinite}
+@keyframes ecoBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes ecoPulse{0%{box-shadow:0 10px 28px rgba(11,185,220,.45),0 0 0 0 rgba(49,215,255,.45)}70%{box-shadow:0 10px 28px rgba(11,185,220,.45),0 0 0 18px rgba(49,215,255,0)}100%{box-shadow:0 10px 28px rgba(11,185,220,.45),0 0 0 0 rgba(49,215,255,0)}}
+.eco-chat-badge{position:absolute;top:-4px;right:-4px;min-width:22px;height:22px;padding:0 6px;
+  background:linear-gradient(135deg,#ff637e,#ff3d5c);color:#fff;font-size:11px;font-weight:700;
+  border-radius:999px;display:grid;place-items:center;border:2px solid #0b1929}
+#ecoChatPanel{position:fixed;right:24px;bottom:100px;width:390px;max-width:calc(100vw - 32px);
+  height:600px;max-height:calc(100vh - 130px);background:rgba(11,25,41,.94);
+  backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);
+  color:var(--eco-text);border-radius:var(--eco-radius);box-shadow:var(--eco-shadow);z-index:9999;
+  display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--eco-border);
+  opacity:0;pointer-events:none;transform:translateY(20px) scale(.94);transform-origin:bottom right;
+  transition:opacity .28s ease,transform .32s cubic-bezier(.34,1.56,.64,1)}
+#ecoChatPanel.open{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+.eco-chat-header{display:flex;align-items:center;gap:12px;padding:14px 16px;
+  background:linear-gradient(135deg,#12243a 0%,#0b1929 100%);border-bottom:1px solid var(--eco-border)}
+.eco-chat-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#0bb9dc,#1879d9);
+  display:grid;place-items:center;font-size:22px;flex-shrink:0}
+.eco-chat-title-wrap{flex:1;min-width:0}
+.eco-chat-title-wrap strong{display:block;font-size:14.5px;font-weight:700}
+.eco-chat-title-wrap small{font-size:11.5px;color:var(--eco-muted);display:flex;align-items:center;gap:6px;margin-top:2px}
+.eco-status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#50e3a4}
+.eco-chat-header > button{background:rgba(255,255,255,.06);border:0;color:var(--eco-muted);font-size:16px;
+  cursor:pointer;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+.eco-chat-header > button:hover{background:rgba(255,99,126,.15);color:#ff637e}
+.eco-chat-messages{flex:1;overflow-y:auto;padding:18px 16px 12px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.eco-msg{max-width:82%;padding:11px 14px;border-radius:16px;font-size:13.5px;line-height:1.55;
+  word-wrap:break-word;white-space:pre-line;animation:ecoFadeIn .3s ease;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+@keyframes ecoFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.eco-msg.bot{background:var(--eco-bubble-bot);color:#dce9f5;border-bottom-left-radius:6px;align-self:flex-start;border:1px solid rgba(49,215,255,.12)}
+.eco-msg.user{background:var(--eco-bubble-user);color:#fff;border-bottom-right-radius:6px;align-self:flex-end}
+.eco-msg.typing{display:inline-flex;gap:5px;padding:14px 16px;align-items:center}
+.eco-msg.typing span{width:7px;height:7px;border-radius:50%;background:#6b8baa;animation:ecoTyping 1.3s ease-in-out infinite}
+.eco-msg.typing span:nth-child(2){animation-delay:.18s}
+.eco-msg.typing span:nth-child(3){animation-delay:.36s}
+@keyframes ecoTyping{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.eco-chat-suggestions{display:flex;gap:7px;flex-wrap:wrap;padding:6px 16px 12px}
+.eco-chat-suggestions button{background:rgba(49,215,255,.08);border:1px solid rgba(49,215,255,.3);
+  color:#9bdcff;font-size:11.5px;font-weight:500;padding:7px 11px;border-radius:999px;cursor:pointer;white-space:nowrap;font-family:inherit}
+.eco-chat-suggestions button:hover{background:rgba(49,215,255,.2);color:#fff}
+.eco-chat-form{display:flex;gap:8px;padding:12px 14px 14px;border-top:1px solid var(--eco-border);background:rgba(8,21,36,.7)}
+.eco-chat-form input{flex:1;background:rgba(8,21,36,.9);color:var(--eco-text);
+  border:1px solid rgba(73,130,180,.35);border-radius:12px;padding:11px 14px;font-size:13.5px;font-family:inherit}
+.eco-chat-form input:focus{outline:none;border-color:var(--eco-primary);box-shadow:0 0 0 3px rgba(49,215,255,.15)}
+.eco-chat-form button{background:linear-gradient(135deg,#0bb9dc,#1879d9);border:0;color:#fff;
+  width:42px;height:42px;border-radius:12px;cursor:pointer;display:grid;place-items:center;flex-shrink:0}
+body.light #ecoChatToggle{background:linear-gradient(135deg,#1479a5,#0d5b7e)}
+body.light #ecoChatPanel{background:rgba(255,255,255,.96);color:#0b1a2a;border-color:#d0dce8;--eco-bubble-bot:#eef4fa;--eco-border:#d8e3ef}
+body.light .eco-chat-header{background:linear-gradient(135deg,#f5faff 0%,#ffffff 100%)}
+body.light .eco-chat-title-wrap small{color:#4a5c72}
+body.light .eco-msg.bot{color:#0b1a2a}
+body.light .eco-chat-form{background:rgba(245,250,255,.9)}
+body.light .eco-chat-form input{background:#fff;color:#0b1a2a;border-color:#d0dce8}
+body.light .eco-chat-suggestions button{background:rgba(20,121,165,.08);border-color:rgba(20,121,165,.25);color:#1479a5}
+@media (max-width:480px){
+  #ecoChatToggle{right:16px;bottom:16px;width:56px;height:56px;font-size:24px}
+  #ecoChatPanel{right:8px;left:8px;bottom:84px;width:auto;max-width:none;height:calc(100vh - 100px);max-height:640px}
+  .eco-msg{max-width:88%;font-size:13px}
+}
+@media (prefers-reduced-motion:reduce){
+  #ecoChatToggle,#ecoChatToggle .eco-chat-icon{animation:none!important}
+}
 </style>
 </head>
-<body><div class="stars" id="stars"></div>
-<header><div class="brand"><div><h1>⚡ Microrred Híbrida 3D</h1><p>Solar · Eólica · Hidráulica · Batería · Demanda</p></div><div class="chips"><span class="chip">3D interactivo</span><span class="chip">24 horas</span><span class="chip">Simulación energética</span></div></div></header>
+<body>
+
+<header>
+  <div class="brand">
+    <div>
+      <h1>⚡ Microrred Híbrida 3D</h1>
+      <p>Solar · Eólica · Hidráulica · Batería · Respaldo · Clima</p>
+    </div>
+    <div class="chips">
+      <span class="chip">3D interactivo</span>
+      <span class="chip">Clima que afecta la simulación</span>
+      <span class="chip">24 horas</span>
+    </div>
+  </div>
+</header>
+
 <main class="wrap">
-<div class="grid">
-<section class="card"><h2>🌐 Simulación 3D interactiva</h2><div class="scene" id="scene"><div class="time-overlay" id="timeLabel">🌅 Amanecer · 06:00</div><div class="overlay"><div class="stat">Hora: <b id="hudHour">06:00</b></div><div class="stat">☀️ Solar: <b id="hudSolar">0.0 kW</b></div><div class="stat">🌬️ Eólica: <b id="hudWind">0.0 kW</b></div><div class="stat">💧 Hidráulica: <b id="hudHydro">0.0 kW</b></div><div class="stat">🔋 Batería: <b id="hudSoc">50%</b></div></div></div><div class="timeline"><input id="hour" type="range" min="0" max="23" value="6"><div class="buttons"><button id="play" class="primary">▶ Iniciar 24 h</button><button id="pause">⏸ Pausar</button><button id="reset">↺ Reiniciar</button><button id="follow">☀️ Seguir Sol</button><button id="explain">🔊 Explicar</button></div></div></section>
-<aside class="card"><h2>⚙️ Configuración</h2><div class="controls"><div class="row"><label>Capacidad batería (kWh)<input id="cap" type="number" value="100" min="1"></label><label>Estado inicial (%)<input id="soc0" type="number" value="50" min="0" max="100"></label></div><div class="row"><label>Eficiencia carga<input id="etaC" type="number" value="0.95" min="0.1" max="1" step="0.01"></label><label>Eficiencia descarga<input id="etaD" type="number" value="0.95" min="0.1" max="1" step="0.01"></label></div><div class="row3"><label>Solar máx. (kW)<input id="solarMax" type="number" value="55" min="0"></label><label>Eólica máx. (kW)<input id="windMax" type="number" value="35" min="0"></label><label>Hidráulica (kW)<input id="hydroMax" type="number" value="25" min="0"></label></div><div class="row"><label>Demanda base (kW)<input id="demandBase" type="number" value="45" min="0"></label><label>Velocidad viento (m/s)<input id="windSpeed" type="number" value="9" min="0" step="0.1"></label></div><div class="buttons"><button id="apply" class="primary">Aplicar configuración</button><button id="theme">🎨 Cambiar tema</button><button id="csv">⬇ Exportar CSV</button></div><div class="info"><b>Cómo funciona:</b> el Sol se desplaza durante el día y los paneles cambian su inclinación para orientarse hacia él. La turbina eólica gira según la velocidad del viento. La energía generada cubre la demanda y los excedentes cargan la batería; si falta energía, la batería descarga.</div></div><div class="metrics"><div class="metric">Generación total<b id="mGen">0.0 kW</b><span class="small">solar + eólica + hidráulica</span></div><div class="metric">Demanda<b id="mDem">0.0 kW</b><span class="small">consumo instantáneo</span></div><div class="metric">Balance<b id="mBal">0.0 kW</b><span class="small">positivo = excedente</span></div><div class="metric">SOC batería<b id="mSoc">50%</b><span class="small">estado de carga</span></div></div></aside>
-</div>
-<div class="charts"><section class="card chart"><h2>📈 Balance energético</h2><canvas id="energyChart"></canvas></section><section class="card chart"><h2>🔋 Comportamiento de batería</h2><canvas id="batteryChart"></canvas></section><section class="card chart"><h2>🏠 Demanda y generación</h2><canvas id="demandChart"></canvas></section><section class="card chart"><h2>🌱 Mezcla renovable</h2><canvas id="mixChart"></canvas></section></div>
-<section class="card" style="margin-top:16px"><h2>📋 Resultados por hora</h2><div class="tablewrap"><table><thead><tr><th>Hora</th><th>Solar</th><th>Eólica</th><th>Hidráulica</th><th>Generación</th><th>Demanda</th><th>Excedente</th><th>Déficit</th><th>Carga batería</th><th>SOC</th></tr></thead><tbody id="tbody"></tbody></table></div></section>
+  <div class="grid">
+    <section class="card">
+      <h2>🌐 Microrred 3D</h2>
+      <div class="scene" id="scene">
+        <div id="sceneLoading" class="scene-loading"><div><div class="spinner"></div><p>Cargando escena 3D…</p></div></div>
+        <div class="time-overlay" id="timeLabel">🌅 Amanecer · 06:00</div>
+        <div class="overlay">
+          <div class="stat">🕐 <b id="hudHour">06:00</b></div>
+          <div class="stat">☀️ <b id="hudSolar">0.0</b><small>kW</small></div>
+          <div class="stat">🌬️ <b id="hudWind">0.0</b><small>kW</small></div>
+          <div class="stat">💧 <b id="hudHydro">0.0</b><small>kW</small></div>
+          <div class="stat">⛽ <b id="hudGenset">0.0</b><small>kW</small></div>
+          <div class="stat">🔋 <b id="hudSoc">50%</b></div>
+          <div class="stat">☁️ <b id="hudCloud">0%</b></div>
+          <div class="stat">🌡️ <b id="hudTemp">0°C</b></div>
+          <div class="stat">🌧️ <b id="hudRain">0 mm/h</b></div>
+        </div>
+      </div>
+      <div class="timeline">
+        <input id="hour" type="range" min="0" max="23" value="6" aria-label="Hora del día">
+        <div class="buttons" style="margin-top:10px">
+          <button id="play" class="primary">▶ Iniciar 24 h</button>
+          <button id="pause" disabled>⏸ Pausar</button>
+          <button id="reset">↺ Reiniciar</button>
+          <button id="follow" aria-pressed="false">☀️ Seguir Sol</button>
+          <button id="explain">🔊 Explicar</button>
+        </div>
+      </div>
+      <div class="weathernow" id="weatherNow"></div>
+    </section>
 
-<section class="card presentation" id="presentation">
-<h2>🎤 Modo presentación — explica el proyecto automáticamente</h2>
-<div class="info">Ideal para exponer frente al profesor. La aplicación puede avanzar paso a paso, resaltar cada elemento de la microrred y leer la explicación en voz alta.</div>
-<div class="presentation-grid">
-<div><div class="steps" id="steps">
-<div class="step active" data-step="0"><div class="num">1</div><h3>☀️ Generación solar</h3><p>Los paneles reciben la radiación solar y producen electricidad.</p></div>
-<div class="step" data-step="1"><div class="num">2</div><h3>🌬️ Generación eólica</h3><p>El viento hace girar las aspas del aerogenerador.</p></div>
-<div class="step" data-step="2"><div class="num">3</div><h3>💧 Generación hídrica</h3><p>El movimiento del agua aporta energía a la microrred.</p></div>
-<div class="step" data-step="3"><div class="num">4</div><h3>🏠 Demanda</h3><p>Se compara toda la generación con el consumo.</p></div>
-<div class="step" data-step="4"><div class="num">5</div><h3>🔋 Carga de batería</h3><p>El excedente se almacena cuando la generación supera la demanda.</p></div>
-<div class="step" data-step="5"><div class="num">6</div><h3>⚡ Descarga de batería</h3><p>Cuando hay déficit, la batería ayuda a cubrir la demanda.</p></div>
-</div></div>
-<div class="present-view"><div><div class="present-icon" id="presentIcon">☀️</div><div class="present-title" id="presentTitle">Paso 1: se genera energía solar</div><div class="present-text" id="presentText">Los paneles solares reciben la radiación del Sol. En la simulación 3D puedes observar cómo cambia su orientación durante el día y cómo aumenta o disminuye la generación.</div></div><div><div class="progressbar"><div id="presentProgress"></div></div><div class="present-controls"><button class="primary" id="presentPlay">▶ Iniciar presentación</button><button id="presentPrev">← Anterior</button><button id="presentNext">Siguiente →</button><button id="presentVoice">🔊 Leer explicación</button></div><div class="tagline" id="presentCounter">Paso 1 de 6</div></div></div>
-</div>
-<div class="illustrations">
-<div class="illus"><svg viewBox="0 0 220 130" aria-label="Ilustración solar"><circle cx="180" cy="25" r="18" fill="#ffd34d"/><g transform="translate(28 58) rotate(-10 70 25)"><rect x="0" y="0" width="140" height="48" rx="4" fill="#164b75" stroke="#5edfff"/><path d="M35 0v48M70 0v48M105 0v48M0 24h140" stroke="#8bdcff" opacity=".6"/><path d="M165 -10L120 20M155 12L112 30M150 35L105 40" stroke="#ffd34d" stroke-width="3"/></g></svg><b>Sol + paneles</b><span>Orientación solar dinámica</span></div>
-<div class="illus"><svg viewBox="0 0 220 130"><path d="M10 35c35-25 55 25 90 0s55 25 110-5" fill="none" stroke="#b879ff" stroke-width="5"/><line x1="110" y1="25" x2="110" y2="112" stroke="#dbe8f2" stroke-width="7"/><circle cx="110" cy="24" r="12" fill="#fff"/><g fill="#b879ff" transform="translate(110 24)"><path d="M0 0l-8-45 16 0z"/><path d="M0 0l39 22-8 14z"/><path d="M0 0l-31 35-12-10z"/></g></svg><b>Viento + eólica</b><span>Aspas según velocidad</span></div>
-<div class="illus"><svg viewBox="0 0 220 130"><path d="M0 35 C40 15 65 55 105 35 S175 55 220 30 L220 130 L0 130Z" fill="#17628a"/><circle cx="110" cy="78" r="28" fill="none" stroke="#72d8ff" stroke-width="8"/><path d="M110 50v56M82 78h56" stroke="#72d8ff" stroke-width="5"/></svg><b>Agua + turbina</b><span>Generación hidráulica</span></div>
-<div class="illus"><svg viewBox="0 0 220 130"><rect x="72" y="20" width="76" height="92" rx="9" fill="#163b38" stroke="#50e3a4" stroke-width="4"/><rect x="84" y="82" width="52" height="18" rx="3" fill="#50e3a4"/><path d="M110 10v10M95 10v10M125 10v10" stroke="#50e3a4" stroke-width="5"/><path d="M25 65h38M157 65h38" stroke="#31d7ff" stroke-width="5"/><path d="M45 58l-12 7 12 7M175 58l12 7-12 7" fill="none" stroke="#31d7ff" stroke-width="3"/></svg><b>Batería + demanda</b><span>Almacena o entrega energía</span></div>
-</div>
-</section>
-<section class="card" style="margin-top:16px"><h2>☁️ Google Sheets + correo</h2><div class="info">Esta versión deja preparada la simulación para conectarla a Google Apps Script. Coloca tu URL <span class="badge">/exec</span> en la constante <b>APPS_SCRIPT_URL</b> del código y podrás enviar los resultados a Google Sheets y por correo. No se incluyen claves privadas en el HTML.</div></section>
-<div class="footer">Microrred educativa 3D · Three.js + Chart.js · Puedes rotar la escena con el mouse y usar la rueda para acercar/alejar.</div>
+    <aside class="card">
+      <h2>⚙️ Configuración</h2>
+      <div class="controls">
+        <div class="section-title">🔋 Batería</div>
+        <div class="slider-row"><input id="cap" type="range" min="10" max="500" value="100" step="1"><span class="slider-val" id="capV">100 kWh</span></div>
+        <div class="slider-row"><input id="soc0" type="range" min="0" max="100" value="50" step="1"><span class="slider-val" id="soc0V">50 %</span></div>
+        <div class="slider-row"><input id="etaC" type="range" min="0.5" max="1" value="0.95" step="0.01"><span class="slider-val" id="etaCV">0.95</span></div>
+        <div class="slider-row"><input id="etaD" type="range" min="0.5" max="1" value="0.95" step="0.01"><span class="slider-val" id="etaDV">0.95</span></div>
+
+        <div class="section-title">⚡ Fuentes de energía (máx.)</div>
+        <div class="slider-row"><input id="solarMax" type="range" min="0" max="300" value="55" step="1"><span class="slider-val" id="solarMaxV">55 kW</span></div>
+        <div class="slider-row"><input id="windMax" type="range" min="0" max="300" value="35" step="1"><span class="slider-val" id="windMaxV">35 kW</span></div>
+        <div class="slider-row"><input id="hydroMax" type="range" min="0" max="300" value="25" step="1"><span class="slider-val" id="hydroMaxV">25 kW</span></div>
+        <div class="slider-row"><input id="gensetMax" type="range" min="0" max="200" value="30" step="1"><span class="slider-val" id="gensetMaxV">30 kW</span></div>
+
+        <div class="section-title">🏠 Demanda</div>
+        <div class="slider-row"><input id="demandBase" type="range" min="0" max="300" value="45" step="1"><span class="slider-val" id="demandBaseV">45 kW</span></div>
+
+        <div class="section-title">🌦️ Clima</div>
+        <div class="row">
+          <label>Escenario<select id="preset">
+            <option value="clear">Despejado</option>
+            <option value="partly" selected>Parcialmente nublado</option>
+            <option value="cloudy">Nublado</option>
+            <option value="storm">Tormenta</option>
+          </select></label>
+          <label>Semilla<input id="seed" type="number" value="7" min="0"></label>
+        </div>
+        <div class="slider-row"><input id="windSpeed" type="range" min="0" max="25" value="9" step="0.1"><span class="slider-val" id="windSpeedV">9 m/s</span></div>
+        <div class="slider-row"><input id="tMean" type="range" min="-5" max="45" value="26" step="0.5"><span class="slider-val" id="tMeanV">26 °C</span></div>
+        <div class="slider-row"><input id="rainMax" type="range" min="0" max="40" value="8" step="0.5"><span class="slider-val" id="rainMaxV">8 mm/h</span></div>
+
+        <div class="buttons">
+          <button id="newWeather">🎲 Nuevo clima</button>
+          <button id="theme">🌓 Tema</button>
+          <button id="csv">⬇ CSV</button>
+        </div>
+        <div class="info">
+          <b>Cómo funciona:</b> la nubosidad reduce la radiación solar y la temperatura altera la eficiencia de los paneles y la demanda.
+          El viento usa una curva de potencia real (arranque, nominal y corte). La lluvia aumenta el caudal hidráulico con retardo.
+          Si la batería no basta, entra el grupo de respaldo.
+        </div>
+      </div>
+      <div class="metrics">
+        <div class="metric">Generación<b id="mGen">0.0 kW</b><span class="small">solar + eólica + hidráulica + respaldo</span></div>
+        <div class="metric">Demanda<b id="mDem">0.0 kW</b><span class="small">con efecto de temperatura</span></div>
+        <div class="metric">Balance<b id="mBal">0.0 kW</b><span class="small">positivo = excedente</span></div>
+        <div class="metric">SOC batería<b id="mSoc">50%</b><span class="small">estado de carga</span></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="charts">
+    <section class="card"><h2>📈 Generación por fuente vs demanda</h2><div class="cbox"><canvas id="energyChart"></canvas></div></section>
+    <section class="card"><h2>🔋 Batería: carga, descarga y SOC</h2><div class="cbox"><canvas id="batteryChart"></canvas></div></section>
+    <section class="card"><h2>⚖️ Excedente y déficit sin cubrir</h2><div class="cbox"><canvas id="balanceChart"></canvas></div></section>
+    <section class="card"><h2>🌱 Mezcla de energía del día</h2><div class="cbox"><canvas id="mixChart"></canvas></div></section>
+    <section class="card"><h2>🌬️ Viento y lluvia</h2><div class="cbox"><canvas id="windRainChart"></canvas></div></section>
+    <section class="card"><h2>☁️ Nubosidad y temperatura</h2><div class="cbox"><canvas id="cloudTempChart"></canvas></div></section>
+  </div>
+
+  <section class="card">
+    <h2>📋 Resultados por hora</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr>
+          <th>Hora</th><th>Solar</th><th>Eólica</th><th>Hidráulica</th><th>Respaldo</th><th>Generación</th>
+          <th>Demanda</th><th>Excedente</th><th>Déficit</th><th>Nubosidad</th><th>Temp.</th><th>SOC</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>📄 Informe de simulación</h2>
+    <div class="info">Envía un informe con los resultados horarios y el clima a tu correo mediante Google Apps Script. Si no lo configuras, usa <b>Imprimir / PDF local</b>.</div>
+    <div class="controls">
+      <label>Correo de destino<input id="reportEmail" type="email" placeholder="tu@correo.com" autocomplete="email"></label>
+      <div class="buttons">
+        <button id="reportBtn" class="primary">📩 Generar y enviar</button>
+        <button id="printBtn">🖨️ Imprimir / PDF local</button>
+      </div>
+      <div id="reportStatus" class="small" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <div class="footer">Microrred educativa 3D · Three.js + Chart.js · Arrastra para rotar, rueda para zoom.</div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.js"></script>
 <script>
-const $=id=>document.getElementById(id); let scene,camera,renderer,controls,solarPanels=[],windBlades=[],water=[],particles=[],sun,simTimer=null,followSun=false,themeIndex=0;
-const themes=[['#07111f','#31d7ff'],['#06170f','#55e38c'],['#12081d','#c17cff'],['#1c0d08','#ff9f5a'],['#f3f7fb','#1479a5']];
-function num(id){return +$(id).value||0}
-function profiles(){let out=[];for(let h=0;h<24;h++){let sunP=Math.max(0,Math.sin(Math.PI*(h-6)/12));let solar=num('solarMax')*Math.pow(sunP,1.15);let ws=num('windSpeed')+3*Math.sin(h*.71)+1.5*Math.sin(h*1.9);let wind=num('windMax')*Math.min(1,Math.max(0,ws/14)**3);let hydro=num('hydroMax')*(.92+.08*Math.sin(h*.4));let demand=num('demandBase')*(.72+.18*Math.sin((h-7)*Math.PI/12)**2+.12*Math.max(0,Math.sin((h-17)*Math.PI/8)));out.push({h,solar,wind,hydro,demand,windSpeed:Math.max(0,ws),sunP});}return out}
-function simulate(){let p=profiles(),cap=num('cap'),soc=cap*num('soc0')/100,ec=num('etaC'),ed=num('etaD'),r=[];for(const x of p){let gen=x.solar+x.wind+x.hydro,bal=gen-x.demand,charge=0,discharge=0,deficit=0,excess=0;if(bal>=0){let room=cap-soc;charge=Math.min(bal,room/ec);soc+=charge*ec;excess=Math.max(0,bal-charge)}else{let need=-bal,avail=soc*ed;discharge=Math.min(need,avail);soc-=discharge/ed;deficit=Math.max(0,need-discharge)}r.push({...x,gen,bal,charge,discharge,excess,deficit,soc:cap?soc/cap*100:0});}return r}
-let data=simulate(),current=6;
-function init3D(){const el=$('scene');scene=new THREE.Scene();scene.fog=new THREE.Fog(0x071b2c,80,240);camera=new THREE.PerspectiveCamera(55,el.clientWidth/el.clientHeight,.1,500);camera.position.set(55,38,72);renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(el.clientWidth,el.clientHeight);renderer.shadowMap.enabled=true;el.prepend(renderer.domElement);controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(0,7,0);scene.add(new THREE.HemisphereLight(0x9fd7ff,0x102030,1.8));let dl=new THREE.DirectionalLight(0xffffff,3);dl.position.set(30,60,20);dl.castShadow=true;scene.add(dl);createGround();createSolar();createWind();createHydro();createBattery();createLoad();createController();createSun();createParticles();window.addEventListener('resize',resize);animate()}
-function mat(c,e=0){return new THREE.MeshStandardMaterial({color:c,metalness:.25,roughness:.42,emissive:e?c:0,emissiveIntensity:e?1.2:0})}
-function box(x,y,z,c){let m=new THREE.Mesh(new THREE.BoxGeometry(x,y,z),mat(c));m.castShadow=m.receiveShadow=true;return m}
-function createGround(){let g=new THREE.Mesh(new THREE.CylinderGeometry(95,95,1,64),mat(0x102536));g.position.y=-.5;g.receiveShadow=true;scene.add(g);for(let i=-90;i<=90;i+=15){let road=box(180,.05,.35,0x18354a);road.position.set(0,.02,i);scene.add(road)} }
-function createSolar(){let group=new THREE.Group();group.position.set(-32,1,2);let base=box(2,7,2,0x6b7785);base.position.y=3.5;group.add(base);for(let i=0;i<3;i++)for(let j=0;j<3;j++){let panel=new THREE.Mesh(new THREE.BoxGeometry(5.5,.18,3.1),mat(0x164b75,1));panel.position.set((i-1)*6.1,8,(j-1)*3.8);panel.rotation.x=-.45;panel.userData.baseY=panel.position.y;panel.castShadow=true;group.add(panel);solarPanels.push(panel)}let label=box(16,.5,5,0x0a2034);label.position.y=.3;group.add(label);scene.add(group);group.userData.type='solar'}
-function createWind(){let g=new THREE.Group();g.position.set(25,0,0);let tower=new THREE.Mesh(new THREE.CylinderGeometry(1.1,.45,22,20),mat(0xdbe8f2));tower.position.y=11;g.add(tower);let hub=new THREE.Mesh(new THREE.SphereGeometry(1.8,20,20),mat(0xffffff,1));hub.position.set(0,21,0);g.add(hub);let blades=new THREE.Group();for(let i=0;i<3;i++){let b=box(.55,9,.35,0xb879ff);b.position.y=4.7;b.rotation.z=.16;blades.add(b)}blades.position.set(0,21,0);windBlades.push(blades);g.add(blades);scene.add(g)}
-function createHydro(){let g=new THREE.Group();g.position.set(-3,0,-25);let tank=box(24,2,16,0x17628a);tank.position.y=.5;g.add(tank);for(let i=-8;i<=8;i+=4){let c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,7,12),mat(0x62c9ff,1));c.position.set(i,4,-2);g.add(c)}let wheel=new THREE.Mesh(new THREE.TorusGeometry(5,.65,16,32),mat(0x4ca7ff,1));wheel.rotation.x=Math.PI/2;wheel.position.set(0,5,4);g.add(wheel);scene.add(g)}
-function createBattery(){let g=new THREE.Group();g.position.set(5,0,20);let body=box(10,13,7,0x163b38);body.position.y=6.5;g.add(body);let top=box(4,1,3,0x50e3a4);top.position.y=13.5;g.add(top);let level=box(8,.25,5,0x50e3a4);level.position.set(0,2,0);g.add(level);g.userData.level=level;scene.add(g);window.batteryGroup=g}
-function createLoad(){let g=new THREE.Group();g.position.set(35,0,20);let h=box(13,9,10,0x31516b);h.position.y=4.5;g.add(h);let roof=new THREE.Mesh(new THREE.ConeGeometry(10,5,4),mat(0x24445b));roof.rotation.y=Math.PI/4;roof.position.y=11;g.add(roof);scene.add(g)}
-function createController(){let c=box(8,6,5,0x2c3440);c.position.set(0,3,8);scene.add(c)}
-function createSun(){sun=new THREE.Mesh(new THREE.SphereGeometry(4,32,32),mat(0xffc928,1));scene.add(sun)}
-function createParticles(){for(let i=0;i<80;i++){let q=new THREE.Mesh(new THREE.SphereGeometry(.16,8,8),mat(0x4de8ff,1));q.visible=false;scene.add(q);particles.push(q)}}
-function updateTimeEnvironment(h){
-  const root=document.documentElement;
-  let phase,top,mid,bottom,body1,body2,sunGlow,blueGlow,stars,svgOpacity,filter;
-  if(h>=5 && h<7){
-    phase='🌅 Amanecer'; top='#9b5b55'; mid='#d58a58'; bottom='#18283a'; body1='#3b2631'; body2='#0b1725'; sunGlow='.20'; blueGlow='.06'; stars='.18'; svgOpacity='.48'; filter='brightness(.82) saturate(1.08)';
-  }else if(h>=7 && h<17){
-    phase='☀️ Día'; top='#1674ad'; mid='#2b9cc6'; bottom='#14304a'; body1='#173e62'; body2='#07111f'; sunGlow='.18'; blueGlow='.12'; stars='0'; svgOpacity='.48'; filter='brightness(1) saturate(1.08)';
-  }else if(h>=17 && h<20){
-    phase='🌇 Atardecer'; top='#7d405f'; mid='#d06b4f'; bottom='#182238'; body1='#321d2e'; body2='#0b1320'; sunGlow='.23'; blueGlow='.05'; stars='.22'; svgOpacity='.42'; filter='brightness(.78) saturate(1.18)';
-  }else{
-    phase='🌙 Noche'; top='#050a18'; mid='#0b1630'; bottom='#050b15'; body1='#030712'; body2='#02050b'; sunGlow='.03'; blueGlow='.03'; stars='1'; svgOpacity='.30'; filter='brightness(.48) saturate(.78)';
-  }
-  root.style.setProperty('--skyTop',top);root.style.setProperty('--skyMid',mid);root.style.setProperty('--skyBottom',bottom);
-  root.style.setProperty('--sunGlow',sunGlow);root.style.setProperty('--blueGlow',blueGlow);
-  root.style.setProperty('--starsOpacity',stars);
-  document.body.style.background=`radial-gradient(circle at 50% -10%,${body1} 0,#07111f 48%,${body2} 100%)`;
-  const starEl=$('stars'); if(starEl) starEl.style.opacity=stars;
-  const bg=$('.microgrid-bg'); if(bg) bg.style.background=body2;
-  const svg=document.querySelector('.microgrid-bg svg'); if(svg){svg.style.opacity=svgOpacity;svg.style.filter=filter;}
-  const label=$('timeLabel'); if(label) label.textContent=`${phase} · ${String(h).padStart(2,'0')}:00`;
-}
-function update3D(d){let angle=Math.PI*(d.h-6)/12;let daylight=Math.max(0,Math.sin(angle));let sx=Math.cos(angle)*55, sy=12+daylight*52, sz=-25+Math.sin(angle)*15;sun.position.set(sx,sy,sz);updateTimeEnvironment(d.h);solarPanels.forEach((p,i)=>{p.rotation.x=-.62+(.82*d.sunP);p.rotation.y=-Math.sin(angle)*.18+Math.sin(d.h*.18+i)*.025;p.rotation.z=Math.cos(angle)*.05});windBlades.forEach(b=>b.rotation.z+=.035+d.windSpeed*.012);window.batteryGroup.userData.level.scale.y=Math.max(.05,d.soc/100);window.batteryGroup.userData.level.position.y=2+(d.soc/100)*5;let count=Math.min(80,Math.round((d.solar+d.wind+d.hydro)*1.1));particles.forEach((q,i)=>{q.visible=i<count;if(q.visible){let t=(performance.now()/1000+i*.08)%1;q.position.lerpVectors(new THREE.Vector3(-25,9,2),new THREE.Vector3(0,4,8),t);if(i%3===1)q.position.lerpVectors(new THREE.Vector3(25,21,0),new THREE.Vector3(0,4,8),t);if(i%3===2)q.position.lerpVectors(new THREE.Vector3(-3,5,-20),new THREE.Vector3(0,4,8),t)}});if(followSun){camera.lookAt(sun.position)}}
-function animate(){requestAnimationFrame(animate);if(data[current])update3D(data[current]);controls.update();renderer.render(scene,camera)}
-function resize(){let el=$('scene');camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix();renderer.setSize(el.clientWidth,el.clientHeight)}
-let charts={};
-function chartsInit(){
-  const labels=data.map(x=>String(x.h).padStart(2,'0')+':00');
-  const common={responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:'#cfe2f4'}}},scales:{x:{ticks:{color:'#9bb0c6'},grid:{color:'#19324a'}},y:{beginAtZero:true,ticks:{color:'#9bb0c6'},grid:{color:'#19324a'}}}};
-  try{
-    if(typeof Chart==='undefined') throw new Error('Chart.js no está disponible');
-    charts.energy=new Chart($('energyChart'),{type:'line',data:{labels,datasets:[ds('☀️ Solar',data.map(x=>x.solar),'#ffd34d'),ds('🌬️ Eólica',data.map(x=>x.wind),'#b879ff'),ds('💧 Hidráulica',data.map(x=>x.hydro),'#4ca7ff'),ds('🏠 Demanda',data.map(x=>x.demand),'#ff637e')]},options:common});
-    charts.battery=new Chart($('batteryChart'),{type:'line',data:{labels,datasets:[ds('🔋 SOC %',data.map(x=>x.soc),'#50e3a4'),ds('⬆ Carga',data.map(x=>x.charge),'#31d7ff'),ds('⬇ Descarga',data.map(x=>x.discharge),'#ff9f5a')]},options:common});
-    charts.demand=new Chart($('demandChart'),{type:'bar',data:{labels,datasets:[ds('Generación',data.map(x=>x.gen),'#4ca7ff','bar'),ds('Demanda',data.map(x=>x.demand),'#ff637e','bar')]},options:common});
-    charts.mix=new Chart($('mixChart'),{type:'doughnut',data:{labels:['Solar','Eólica','Hidráulica'],datasets:[{data:[sum('solar'),sum('wind'),sum('hydro')],backgroundColor:['#ffd34d','#b879ff','#4ca7ff'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#cfe2f4'}}}}});
-  }catch(err){
-    console.warn(err); drawFallbackCharts();
-  }
-}
-function drawFallbackCharts(){
-  drawLineFallback($('energyChart'),['Solar','Eólica','Hidráulica','Demanda'],[data.map(x=>x.solar),data.map(x=>x.wind),data.map(x=>x.hydro),data.map(x=>x.demand)],['#ffd34d','#b879ff','#4ca7ff','#ff637e'],'Potencia (kW)');
-  drawLineFallback($('batteryChart'),['SOC (%)','Carga','Descarga'],[data.map(x=>x.soc),data.map(x=>x.charge),data.map(x=>x.discharge)],['#50e3a4','#31d7ff','#ff9f5a'],'Batería');
-  drawLineFallback($('demandChart'),['Generación','Demanda'],[data.map(x=>x.gen),data.map(x=>x.demand)],['#4ca7ff','#ff637e'],'kW');
-  drawDonutFallback($('mixChart'),[sum('solar'),sum('wind'),sum('hydro')],['#ffd34d','#b879ff','#4ca7ff'],['Solar','Eólica','Hidráulica']);
-}
-function svgBase(el){el.replaceWith(el.cloneNode(false));let n=el.parentElement.querySelector('canvas:last-child');return n}
-function drawLineFallback(canvas, names, series, colors, yTitle){
-  const w=canvas.clientWidth||600,h=canvas.clientHeight||270;canvas.width=w*2;canvas.height=h*2;const c=canvas.getContext('2d');c.scale(2,2);c.clearRect(0,0,w,h);c.fillStyle='#09182a';c.fillRect(0,0,w,h);const pad={l:46,r:18,t:34,b:38};const iw=w-pad.l-pad.r,ih=h-pad.t-pad.b;const max=Math.max(1,...series.flat())*1.12;
-  c.strokeStyle='#19324a';c.lineWidth=1;c.font='11px system-ui';c.fillStyle='#9bb0c6';c.textAlign='right';
-  for(let j=0;j<=4;j++){let y=pad.t+ih*j/4;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillText((max*(1-j/4)).toFixed(0),pad.l-7,y+4)}
-  c.textAlign='center';for(let i=0;i<24;i+=3){let x=pad.l+iw*i/23;c.fillText(String(i).padStart(2,'0')+':00',x,h-13)}
-  series.forEach((arr,k)=>{c.strokeStyle=colors[k];c.lineWidth=2.5;c.beginPath();arr.forEach((v,i)=>{let x=pad.l+iw*i/23,y=pad.t+ih*(1-v/max);i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke()});
-  c.textAlign='left';let lx=pad.l;names.forEach((n,k)=>{c.fillStyle=colors[k];c.fillRect(lx,10,12,3);c.fillText(n,lx+16,14);lx+=Math.max(90,n.length*7+35)});
-}
-function drawDonutFallback(canvas,vals,colors,names){const w=canvas.clientWidth||600,h=canvas.clientHeight||270;canvas.width=w*2;canvas.height=h*2;const c=canvas.getContext('2d');c.scale(2,2);c.clearRect(0,0,w,h);c.fillStyle='#09182a';c.fillRect(0,0,w,h);const total=vals.reduce((a,b)=>a+b,0)||1;let a=-Math.PI/2;const cx=w*.38,cy=h*.52,r=Math.min(w,h)*.30;c.lineWidth=r*.42;vals.forEach((v,i)=>{const da=v/total*Math.PI*2;c.beginPath();c.strokeStyle=colors[i];c.arc(cx,cy,r,a,a+da);c.stroke();a+=da});c.fillStyle='#edf6ff';c.font='700 18px system-ui';c.textAlign='center';c.fillText('Energía',cx,cy-2);c.font='12px system-ui';c.fillStyle='#9bb0c6';c.fillText('renovable',cx,cy+16);c.textAlign='left';names.forEach((n,i)=>{let y=48+i*28;c.fillStyle=colors[i];c.fillRect(w*.65,y-8,12,12);c.fillStyle='#cfe2f4';c.fillText(n,w*.65+20,y+2);c.fillText(vals[i].toFixed(1)+' kWh',w*.65+20,y+18)});}
-function ds(label,data,color,type='line'){return {label,data,borderColor:color,backgroundColor:color,borderWidth:2,fill:false,tension:.28,pointRadius:2,type}}function sum(k){return data.reduce((a,x)=>a+x[k],0)}
-function renderTable(){ $('tbody').innerHTML=data.map(x=>`<tr><td>${String(x.h).padStart(2,'0')}:00</td><td>${x.solar.toFixed(1)}</td><td>${x.wind.toFixed(1)}</td><td>${x.hydro.toFixed(1)}</td><td>${x.gen.toFixed(1)}</td><td>${x.demand.toFixed(1)}</td><td>${x.excess.toFixed(1)}</td><td>${x.deficit.toFixed(1)}</td><td>${(x.charge-x.discharge).toFixed(1)}</td><td>${x.soc.toFixed(1)}%</td></tr>`).join('')}
-function updateUI(){let d=data[current];$('hour').value=current;$('hudHour').textContent=String(d.h).padStart(2,'0')+':00';$('hudSolar').textContent=d.solar.toFixed(1)+' kW';$('hudWind').textContent=d.wind.toFixed(1)+' kW';$('hudHydro').textContent=d.hydro.toFixed(1)+' kW';$('hudSoc').textContent=d.soc.toFixed(1)+'%';$('mGen').textContent=d.gen.toFixed(1)+' kW';$('mDem').textContent=d.demand.toFixed(1)+' kW';$('mBal').textContent=d.bal.toFixed(1)+' kW';$('mSoc').textContent=d.soc.toFixed(1)+'%'}
-function rebuild(){data=simulate();current=Math.min(current,23);updateUI();renderTable();charts.energy.data.datasets[0].data=data.map(x=>x.solar);charts.energy.data.datasets[1].data=data.map(x=>x.wind);charts.energy.data.datasets[2].data=data.map(x=>x.hydro);charts.energy.data.datasets[3].data=data.map(x=>x.demand);charts.battery.data.datasets[0].data=data.map(x=>x.soc);charts.battery.data.datasets[1].data=data.map(x=>x.charge);charts.battery.data.datasets[2].data=data.map(x=>x.discharge);charts.demand.data.datasets[0].data=data.map(x=>x.gen);charts.demand.data.datasets[1].data=data.map(x=>x.demand);charts.mix.data.datasets[0].data=[sum('solar'),sum('wind'),sum('hydro')];Object.values(charts).forEach(c=>c.update())}
-function speech(){let d=data[current],msg=`Son las ${d.h} horas. Los paneles solares producen ${d.solar.toFixed(1)} kilovatios y se orientan hacia el Sol. La energía eólica es de ${d.wind.toFixed(1)} kilovatios, con una velocidad aproximada de ${d.windSpeed.toFixed(1)} metros por segundo. La hidráulica aporta ${d.hydro.toFixed(1)} kilovatios. La demanda es de ${d.demand.toFixed(1)} kilovatios y la batería está al ${d.soc.toFixed(0)} por ciento.`;speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(msg))}
-function csv(){let lines=['Hora,Solar kW,Eolica kW,Hidraulica kW,Generacion kW,Demanda kW,Excedente kW,Deficit kW,Carga kWh,Descarga kWh,SOC %'];data.forEach(x=>lines.push(`${x.h},${x.solar.toFixed(2)},${x.wind.toFixed(2)},${x.hydro.toFixed(2)},${x.gen.toFixed(2)},${x.demand.toFixed(2)},${x.excess.toFixed(2)},${x.deficit.toFixed(2)},${x.charge.toFixed(2)},${x.discharge.toFixed(2)},${x.soc.toFixed(2)}`));let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));a.download='simulacion_microrred_3D.csv';a.click()}
-$('hour').oninput=e=>{current=+e.target.value;updateUI()};$('apply').onclick=rebuild;$('reset').onclick=()=>{current=6;$('hour').value=6;updateUI()};$('follow').onclick=()=>{followSun=!followSun;controls.enabled=!followSun;$('follow').textContent=followSun?'☀️ Sol activo':'☀️ Seguir Sol'};$('explain').onclick=speech;$('csv').onclick=csv;$('play').onclick=()=>{clearInterval(simTimer);simTimer=setInterval(()=>{current=(current+1)%24;updateUI()},900)};$('pause').onclick=()=>clearInterval(simTimer);$('theme').onclick=()=>{themeIndex=(themeIndex+1)%themes.length;document.documentElement.style.setProperty('--bg',themes[themeIndex][0]);document.documentElement.style.setProperty('--accent',themes[themeIndex][1])};
+/* ==================== CONFIGURACIÓN ==================== */
+const APPS_SCRIPT_URL = "PEGA_AQUI_LA_URL_DE_TU_IMPLEMENTACION_DE_APPS_SCRIPT";
+const pad = h => String(h).padStart(2, '0');
+const LABELS = Array.from({length: 24}, (_, h) => pad(h) + ':00');
+const COL = {solar:'#ffd34d', wind:'#b879ff', hydro:'#4ca7ff', genset:'#ff4d6d', demand:'#ff637e',
+  soc:'#50e3a4', charge:'#31d7ff', discharge:'#ff9f5a', excess:'#50e3a4', deficit:'#ff637e',
+  bal:'#edf6ff', rain:'#4de8ff', cloud:'#9bb0c6', temp:'#ffb347'};
+const PRESETS = {
+  clear:  {cloud:.08, rain:0,   gust:.6},
+  partly: {cloud:.40, rain:.08, gust:1.2},
+  cloudy: {cloud:.75, rain:.25, gust:1.8},
+  storm:  {cloud:.90, rain:.60, gust:3.0}
+};
 
-const presentationSteps=[
-{icon:'☀️',title:'Paso 1: se genera energía solar',text:'Los paneles solares reciben la radiación del Sol. En la escena 3D se orientan hacia el Sol y su producción cambia con la hora.'},
-{icon:'🌬️',title:'Paso 2: se suma la energía eólica',text:'El viento hace girar las aspas del aerogenerador. Una mayor velocidad del viento representa una mayor producción dentro del modelo.'},
-{icon:'💧',title:'Paso 3: se incorpora la generación hídrica',text:'La turbina hidráulica representa el aprovechamiento del movimiento del agua para producir electricidad y complementar las fuentes solar y eólica.'},
-{icon:'🏠',title:'Paso 4: se compara con la demanda',text:'La generación total se compara con el consumo. Si la generación es mayor, existe excedente; si es menor, aparece un déficit.'},
-{icon:'🔋',title:'Paso 5: el excedente carga la batería',text:'Cuando sobra energía, la batería almacena una parte del excedente respetando su capacidad y la eficiencia de carga.'},
-{icon:'⚡',title:'Paso 6: la batería ayuda ante un déficit',text:'Cuando la generación no alcanza para cubrir la demanda, la batería entrega energía hasta donde permita su estado de carga y eficiencia.'}
+/* ==================== HELPERS ==================== */
+const $ = id => document.getElementById(id);
+const num = id => +$(id).value || 0;
+const fmt = (v, d = 1) => Number(v).toFixed(d);
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+function mulberry32(a) {
+  return () => {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+/* ==================== VOZ DEL ASISTENTE ==================== */
+function speakJarvis(text, queue = false) {
+  if (!('speechSynthesis' in window)) return;
+  if (!queue) speechSynthesis.cancel();
+  const clean = String(text).replace(/\*\*/g, '').replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF\uFE0F]/gu, '').replace(/\s+/g, ' ');
+  const u = new SpeechSynthesisUtterance(clean);
+  u.lang = 'es-ES';
+  u.rate = 0.95;
+  u.pitch = 0.85;
+  u.volume = 1;
+  const voices = speechSynthesis.getVoices();
+  const preferred = voices.find(v =>
+    /(jorge|diego|juan|pablo|enrique|male|hombre|Spanish|es-ES|es-MX|es-US)/i.test(v.name) &&
+    /es/i.test(v.lang)
+  ) || voices.find(v => /es/i.test(v.lang));
+  if (preferred) u.voice = preferred;
+  speechSynthesis.speak(u);
+}
+if ('speechSynthesis' in window) {
+  speechSynthesis.onvoiceschanged = () => { speechSynthesis.getVoices(); };
+}
+
+/* ==================== CLIMA ==================== */
+let weather = [];
+function genWeather() {
+  const P = PRESETS[$('preset').value] || PRESETS.partly;
+  const rnd = mulberry32(num('seed'));
+  const tMean = num('tMean'), wBase = num('windSpeed'), rMax = num('rainMax');
+  let cloud = P.cloud, wind = wBase, ema = 0;
+  weather = [];
+  for (let h = 0; h < 24; h++) {
+    cloud = clamp(cloud * .6 + P.cloud * .4 + (rnd() - .5) * .3, 0, 1);
+    wind = Math.max(0, wind * .6 + wBase * .4 + (rnd() - .5) * P.gust * 2);
+    const rain = rnd() < P.rain ? rMax * rnd() : 0;
+    ema = ema * .6 + rain;
+    const temp = tMean + 4 * Math.sin((h - 9) * Math.PI / 12) + (rnd() - .5) * 1.5;
+    weather.push({h, cloud, windV: wind, rain, temp, hydroF: clamp(.45 + .12 * ema, .3, 1)});
+  }
+}
+
+/* ==================== MODELO ==================== */
+let data = [];
+function simulate() {
+  const cap = num('cap'), ec = num('etaC') || 1, ed = num('etaD') || 1, gMax = num('gensetMax');
+  const sMax = num('solarMax'), wMax = num('windMax'), hMax = num('hydroMax'), dBase = num('demandBase');
+  let soc = cap * num('soc0') / 100;
+  return weather.map(W => {
+    const h = W.h;
+    const sunP = Math.max(0, Math.sin(Math.PI * (h - 6) / 12));
+    const irr = sunP * (1 - .78 * W.cloud);
+    const tDer = clamp(1 - .004 * (W.temp - 25), .8, 1.05);
+    const solar = sMax * Math.pow(irr, 1.1) * tDer;
+    const v = W.windV, vin = 3, vr = 12, vout = 25;
+    const wind = (v < vin || v > vout) ? 0 : wMax * clamp((v ** 3 - vin ** 3) / (vr ** 3 - vin ** 3), 0, 1);
+    const hydro = hMax * W.hydroF;
+    const demand = dBase
+      * (.72 + .18 * Math.sin((h - 7) * Math.PI / 12) ** 2 + .12 * Math.max(0, Math.sin((h - 17) * Math.PI / 8)))
+      * (1 + .025 * Math.max(0, W.temp - 26) + .015 * Math.max(0, 16 - W.temp));
+    const gen = solar + wind + hydro, bal = gen - demand;
+    let charge = 0, discharge = 0, excess = 0, genset = 0, deficit = 0;
+    if (bal >= 0) {
+      charge = Math.min(bal, Math.max(0, cap - soc) / ec);
+      soc += charge * ec;
+      excess = bal - charge;
+    } else {
+      const need = -bal;
+      discharge = Math.min(need, soc * ed);
+      soc -= discharge / ed;
+      const rest = need - discharge;
+      genset = Math.min(rest, gMax);
+      deficit = rest - genset;
+    }
+    return {...W, solar, wind, hydro, demand, gen, bal, charge, discharge, excess, genset, deficit,
+      windSpeed: v, sunP, irr, soc: cap ? soc / cap * 100 : 0};
+  });
+}
+
+/* ==================== THREE.JS ==================== */
+let scene, camera, renderer, controls, sunMesh, sunLight, hemi, panelMat, batBar, lampMats = [];
+let panelGroups = [], rotors = [], clouds = [], flowCurves = [], flowPool = [], rainPts, rainPos;
+let followSun = false, lastEnv = null, lastT = 0, dt = 0;
+
+const M = (c, o = {}) => new THREE.MeshStandardMaterial({color: c, metalness: .2, roughness: .6, ...o});
+const G = (c, i = 1.2) => new THREE.MeshStandardMaterial({color: c, emissive: c, emissiveIntensity: i, roughness: .4});
+const mc = c => c instanceof THREE.Material ? c : M(c);
+function B(w, h, d, c, x, y, z, parent = scene) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mc(c));
+  m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; parent.add(m); return m;
+}
+function cyl(rt, rb, h, c, x, y, z, seg = 24, parent = scene) {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg), mc(c));
+  m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; parent.add(m); return m;
+}
+
+function init3D() {
+  try {
+    if (typeof THREE === 'undefined') throw new Error('no se pudo cargar Three.js');
+    init3DCore();
+  } catch (err) {
+    console.error(err);
+    showFallback(err.message || String(err));
+    if (data[current]) drawFallback(data[current]);
+  }
+}
+
+function init3DCore() {
+  const el = $('scene'), loader = $('sceneLoading');
+  scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0xe6a57a, 140, 420);
+  camera = new THREE.PerspectiveCamera(42, el.clientWidth / el.clientHeight, .1, 1000);
+  camera.position.set(-10, 42, 110);
+  renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+  renderer.setClearColor(0x000000, 0);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(el.clientWidth, el.clientHeight);
+  renderer.shadowMap.enabled = true;
+  el.prepend(renderer.domElement);
+
+  if (THREE.OrbitControls) {
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; controls.target.set(0, 9, -6);
+    controls.minDistance = 40; controls.maxDistance = 260;
+  } else controls = {update() {}, enabled: false};
+
+  hemi = new THREE.HemisphereLight(0xffd6b0, 0x2a3a2a, 1.3); scene.add(hemi);
+  sunLight = new THREE.DirectionalLight(0xffb070, 2.2);
+  sunLight.castShadow = true; sunLight.shadow.mapSize.set(1024, 1024);
+  Object.assign(sunLight.shadow.camera, {left: -120, right: 120, top: 120, bottom: -120});
+  scene.add(sunLight);
+
+  buildGround(); buildMountains(); buildFog(); buildCity(); buildWindFarm(); buildSilos();
+  buildHangar(); buildBatteryBox(); buildSolarArrays(); buildBuildings(); buildPathLights();
+  buildFlows(); buildClouds(); buildRain();
+
+  sunMesh = new THREE.Mesh(new THREE.SphereGeometry(7, 32, 32), G(0xffb35c, 1.6));
+  scene.add(sunMesh);
+
+  window.addEventListener('resize', resize);
+  lastT = performance.now();
+  animate();
+  loader.classList.add('hidden');
+}
+
+function buildGround() {
+  const g = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), M(0x55644a, {roughness: 1}));
+  g.rotation.x = -Math.PI / 2; g.receiveShadow = true; scene.add(g);
+  const r = mulberry32(11);
+  for (let i = 0; i < 26; i++) {
+    const p = new THREE.Mesh(new THREE.CircleGeometry(6 + r() * 12, 24), M(r() < .5 ? 0x6f9a54 : 0x4f7a43));
+    p.rotation.x = -Math.PI / 2; p.position.set(-80 + r() * 170, .03, -60 + r() * 110); p.receiveShadow = true; scene.add(p);
+  }
+  B(120, .08, 5, 0x8a8f96, -30, .04, 42);
+  B(5, .08, 90, 0x8a8f96, 14, .04, 10);
+}
+
+function buildMountains() {
+  [[-150, 40, -280, 90], [-40, 50, -320, 120], [70, 36, -290, 100], [200, 58, -340, 130]].forEach(([x, h, z, r]) => {
+    const m = new THREE.Mesh(new THREE.ConeGeometry(r, h, 7, 1, false), new THREE.MeshStandardMaterial({color: 0x4a4f78, flatShading: true, roughness: 1}));
+    m.position.set(x, h / 2 - 2, z); scene.add(m);
+  });
+}
+
+function buildFog() {
+  [[-20, 9, -90, 0.5], [-10, 14, -120, 0.4], [20, 22, -170, 0.35]].forEach(([x, y, z, o]) => {
+    const f = new THREE.Mesh(new THREE.PlaneGeometry(420, 26),
+      new THREE.MeshBasicMaterial({color: 0xf6ece6, transparent: true, opacity: o, depthWrite: false, fog: false}));
+    f.position.set(x, y, z); scene.add(f);
+  });
+}
+
+function buildCity() {
+  const r = mulberry32(5), m = G(0xffc87a, 2.2);
+  for (let i = 0; i < 70; i++) {
+    const s = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2 + r() * 4, 1.2), m);
+    s.position.set(110 + r() * 150, 2 + r() * 5, -180 - r() * 60); scene.add(s);
+  }
+}
+
+function buildWindFarm() {
+  [[-82, -10, .2], [-64, -32, .5], [-92, -44, .9], [-48, -58, 1.3], [-108, -70, 1.7], [-72, -78, 2.1]].forEach(([x, z, ph]) => {
+    const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = .5; scene.add(g);
+    cyl(.7, 1.5, 34, 0xf2f5f8, 0, 17, 0, 14, g);
+    B(3.4, 2.2, 2.2, 0xf0f4f8, 0, 35, 0, g);
+    const rotor = new THREE.Group(); rotor.position.set(-1.9, 35, 0); g.add(rotor);
+    for (let k = 0; k < 3; k++) {
+      const arm = new THREE.Group(); arm.rotation.x = k * 2 * Math.PI / 3; rotor.add(arm);
+      const bl = new THREE.Mesh(new THREE.BoxGeometry(.5, 14, .6), M(0xffffff));
+      bl.position.y = 7; bl.castShadow = true; arm.add(bl);
+    }
+    rotors.push({obj: rotor, ph});
+  });
+}
+
+function buildSilos() {
+  for (let i = 0; i < 6; i++) {
+    const x = -20 + i * 9.5, z = -46;
+    cyl(4.3, 4.3, 24, M(0xc9d2dc, {metalness: .85, roughness: .22}), x, 12, z, 32);
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(4.3, 32, 12, 0, Math.PI * 2, 0, Math.PI / 2),
+      M(0xd5dde6, {metalness: .85, roughness: .22}));
+    dome.position.set(x, 24, z); dome.castShadow = true; scene.add(dome);
+  }
+  [-62, -54].forEach((x, i) => {
+    cyl(3, 3, 7, M(0x7d91a8, {metalness: .7, roughness: .3}), x, 3.5, -30 - i * 4, 24);
+  });
+}
+
+function buildHangar() {
+  const g = new THREE.Group(); g.position.set(-22, 0, -10); scene.add(g);
+  const W = 28, D = 16;
+  B(W, .4, D, 0x3a4048, 0, .2, 0, g);
+  B(W, 3, .4, 0xcdd5de, 0, 1.5, -D / 2, g);
+  const geo = new THREE.CylinderGeometry(D / 2, D / 2, W, 32, 1, true, 0, Math.PI);
+  geo.rotateZ(Math.PI / 2);
+  const roof = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({color: 0x2d6fa8, side: THREE.DoubleSide, metalness: .55, roughness: .35}));
+  roof.position.y = 3; roof.castShadow = true; g.add(roof);
+  for (let i = 0; i < 4; i++) {
+    const p = new THREE.Mesh(new THREE.BoxGeometry(5, .15, 4), M(0x1d4f8f, {metalness: .6, roughness: .25}));
+    p.position.set(-9 + i * 6, 9.5, 0); p.rotation.z = .4; p.castShadow = true; g.add(p);
+  }
+}
+
+function buildBatteryBox() {
+  const g = new THREE.Group(); g.position.set(-14, 0, 14); scene.add(g);
+  B(10, 4.5, 4.5, 0xe8edf2, 0, 2.25, 0, g);
+  B(10.1, .8, 4.6, 0x2a6fb0, 0, 3.2, 0, g);
+  batBar = B(.4, 3, .15, G(0x50e3a4, 1.8), 4.8, 2, 0, g);
+  batBar.position.set(0, 2, 2.3);
+}
+
+function buildSolarArrays() {
+  panelMat = M(0x1d4f8f, {metalness: .6, roughness: .25, emissive: 0x1d4f8f, emissiveIntensity: .2});
+  const arrays = [{cx: 6, cz: 14, cols: 5, rows: 3}, {cx: 42, cz: 22, cols: 4, rows: 4}, {cx: 40, cz: -12, cols: 5, rows: 2}];
+  arrays.forEach(a => {
+    const grp = new THREE.Group(); grp.position.set(a.cx, 0, a.cz); scene.add(grp);
+    for (let r = 0; r < a.rows; r++) for (let c = 0; c < a.cols; c++) {
+      const x = (c - (a.cols - 1) / 2) * 6.5, z = (r - (a.rows - 1) / 2) * 4.6;
+      const pivot = new THREE.Group(); pivot.position.set(x, 2.8, z); grp.add(pivot);
+      const p = new THREE.Mesh(new THREE.BoxGeometry(5.6, .2, 3.8), panelMat);
+      p.castShadow = true; pivot.add(p);
+      B(.2, 2.8, .2, 0x9aa6b4, 0, -1.4, 0, pivot);
+      panelGroups.push(pivot);
+    }
+  });
+}
+
+function buildBuildings() {
+  const g = new THREE.Group(); g.position.set(-62, 0, 26); scene.add(g);
+  B(16, 8, 11, 0xdfe5ec, 0, 4, 0, g);
+  B(16.4, .6, 11.4, 0x9aa3ad, 0, 8.3, 0, g);
+  for (let f = 0; f < 2; f++) for (let c = -2; c <= 2; c++) B(2, 1.5, .15, G(0xffe2a0, 1.1), c * 3, 2.5 + f * 3, 5.6, g);
+  B(9, 6, 8, 0xc9d1db, -14, 3, 2, g);
+  B(9, 4, 7, 0x3d7fb8, 26, 2, -2);
+  B(9.4, .5, 7.4, 0x1f5a92, 26, 4.2, -2);
+  [[-44, 0, 18], [-48, 0, 6], [10, 0, -6], [-30, 0, 30]].forEach(([x, , z]) => {
+    const s = new THREE.Mesh(new THREE.SphereGeometry(2.4, 14, 10), M(0x3f6b3a));
+    s.position.set(x, 1.6, z); s.castShadow = true; scene.add(s);
+  });
+}
+
+function buildPathLights() {
+  [[-8, 22], [18, 4], [30, 10], [-40, 16], [52, 4]].forEach(([x, z]) => {
+    const m = G(0xffd27a, 2.4);
+    B(.2, 6, .2, 0x2a3240, x, 3, z);
+    const lamp = new THREE.Mesh(new THREE.SphereGeometry(.5, 8, 8), m);
+    lamp.position.set(x, 6.2, z); scene.add(lamp); lampMats.push(m);
+  });
+}
+
+const FLOW = [
+  {key: 'solar',     pts: [[24, 12], [10, 15], [-2, 17], [-8, 15]],       col: 0xfff2b0, max: () => num('solarMax')},
+  {key: 'wind',      pts: [[-70, -26], [-46, -14], [-30, 2], [-22, 8]],   col: 0xd9b8ff, max: () => num('windMax')},
+  {key: 'hydro',     pts: [[-10, -36], [-6, -24], [-10, -4], [-14, 8]],   col: 0x8fd4ff, max: () => num('hydroMax')},
+  {key: 'discharge', pts: [[-14, 14], [-30, 18], [-46, 22], [-54, 24]],   col: 0x9ff5cf, max: () => num('cap') / 4},
+  {key: 'genset',    pts: [[-22, -4], [-30, 4], [-42, 14], [-52, 24]],    col: 0xff8fa1, max: () => num('gensetMax')}
 ];
-let presentStep=0,presentTimer=null;
-let chartAnimToken=0;
-function animatePresentationCharts(targetHour){
-  const token=++chartAnimToken;
-  const target=Math.max(0,Math.min(23,targetHour));
-  const duration=2300;
-  const start=performance.now();
-  const keys=[['energy',['solar','wind','hydro','demand']],['battery',['soc','charge','discharge']],['demand',['gen','demand']]];
-  if(typeof Chart!=='undefined' && charts.energy){
-    Object.entries(charts).forEach(([name,ch])=>{
-      if(name==='mix') return;
-      ch.data.datasets.forEach(ds=>{ds.data=data.map(()=>null);});
-      ch.update('none');
+const PER_PATH = 16;
+function buildFlows() {
+  FLOW.forEach(f => {
+    const curve = new THREE.CatmullRomCurve3(f.pts.map(([x, z]) => new THREE.Vector3(x, .6, z)));
+    flowCurves.push(curve);
+    const mat = G(f.col, 2.4), arr = [];
+    for (let k = 0; k < PER_PATH; k++) {
+      const s = new THREE.Mesh(new THREE.SphereGeometry(.4, 8, 8), mat);
+      s.visible = false; scene.add(s); arr.push(s);
+    }
+    flowPool.push(arr);
+  });
+}
+
+function buildClouds() {
+  const r = mulberry32(21);
+  for (let i = 0; i < 6; i++) {
+    const g = new THREE.Group();
+    [[0, 0, 0, 9], [10, 1, 2, 7], [-9, .5, -2, 7]].forEach(([x, y, z, rad]) => {
+      const s = new THREE.Mesh(new THREE.SphereGeometry(rad, 14, 10),
+        new THREE.MeshStandardMaterial({color: 0xffe9dc, transparent: true, opacity: .55, roughness: 1, depthWrite: false}));
+      s.position.set(x, y, z); g.add(s);
     });
-    function frame(now){
-      if(token!==chartAnimToken) return;
-      const p=Math.min(1,(now-start)/duration);
-      const eased=1-Math.pow(1-p,3);
-      const upto=Math.min(target,Math.floor(target*eased));
-      keys.forEach(([name,fields])=>{
-        const ch=charts[name];
-        fields.forEach((field,j)=>{if(ch&&ch.data.datasets[j]) ch.data.datasets[j].data=data.map((x,i)=>i<=upto?x[field]:null);});
-        if(ch) ch.update('none');
-      });
-      if(charts.mix){
-        const vals=['solar','wind','hydro'].map(k=>data.slice(0,upto+1).reduce((a,x)=>a+x[k],0));
-        charts.mix.data.datasets[0].data=vals; charts.mix.update('none');
-      }
-      if(p<1) requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
-  } else {
-    // Fallback canvas: redraw progressively when Chart.js is unavailable.
-    const startFallback=performance.now();
-    function fallbackFrame(now){
-      if(token!==chartAnimToken) return;
-      const p=Math.min(1,(now-startFallback)/duration), upto=Math.min(target,Math.floor(target*p));
-      const slice=a=>a.map((v,i)=>i<=upto?v:NaN);
-      drawLineFallback($('energyChart'),['Solar','Eólica','Hidráulica','Demanda'],[slice(data.map(x=>x.solar)),slice(data.map(x=>x.wind)),slice(data.map(x=>x.hydro)),slice(data.map(x=>x.demand))],['#ffd34d','#b879ff','#4ca7ff','#ff637e'],'Potencia (kW)');
-      drawLineFallback($('batteryChart'),['SOC (%)','Carga','Descarga'],[slice(data.map(x=>x.soc)),slice(data.map(x=>x.charge)),slice(data.map(x=>x.discharge))],['#50e3a4','#31d7ff','#ff9f5a'],'Batería');
-      drawLineFallback($('demandChart'),['Generación','Demanda'],[slice(data.map(x=>x.gen)),slice(data.map(x=>x.demand))],['#4ca7ff','#ff637e'],'kW');
-      drawDonutFallback($('mixChart'),[data.slice(0,upto+1).reduce((a,x)=>a+x.solar,0),data.slice(0,upto+1).reduce((a,x)=>a+x.wind,0),data.slice(0,upto+1).reduce((a,x)=>a+x.hydro,0)],['#ffd34d','#b879ff','#4ca7ff'],['Solar','Eólica','Hidráulica']);
-      if(p<1) requestAnimationFrame(fallbackFrame);
-    }
-    requestAnimationFrame(fallbackFrame);
+    g.position.set(0, 30 + r() * 10, -110 - r() * 40);
+    scene.add(g); clouds.push(g);
   }
 }
-function showPresentStep(i,voice=false){presentStep=(i+presentationSteps.length)%presentationSteps.length;const st=presentationSteps[presentStep];$('presentIcon').textContent=st.icon;$('presentTitle').textContent=st.title;$('presentText').textContent=st.text;$('presentCounter').textContent=`Paso ${presentStep+1} de ${presentationSteps.length}`;$('presentProgress').style.width=((presentStep+1)/presentationSteps.length*100)+'%';document.querySelectorAll('.step').forEach((e,j)=>e.classList.toggle('active',j===presentStep));current=[6,9,12,15,18,21][presentStep];updateUI();animatePresentationCharts(current);if(voice){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(st.title+'. '+st.text));}}
-function startPresentation(){clearInterval(presentTimer);showPresentStep(presentStep,true);presentTimer=setInterval(()=>{if(presentStep===presentationSteps.length-1){clearInterval(presentTimer);$('presentPlay').textContent='▶ Repetir presentación';return}showPresentStep(presentStep+1,true)},4500);$('presentPlay').textContent='⏸ Presentación activa';}
-$('presentNext').onclick=()=>showPresentStep(presentStep+1);$('presentPrev').onclick=()=>showPresentStep(presentStep-1);$('presentVoice').onclick=()=>showPresentStep(presentStep,true);$('presentPlay').onclick=()=>{if(presentTimer){clearInterval(presentTimer);presentTimer=null;$('presentPlay').textContent='▶ Continuar presentación'}else startPresentation()};document.querySelectorAll('.step').forEach(e=>e.onclick=()=>{clearInterval(presentTimer);presentTimer=null;showPresentStep(+e.dataset.step)});
 
-init3D();chartsInit();renderTable();updateUI();showPresentStep(0);
-</script></body></html>
+function buildRain() {
+  const n = 500, pos = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) { pos[i * 3] = (Math.random() - .5) * 150; pos[i * 3 + 1] = Math.random() * 50; pos[i * 3 + 2] = (Math.random() - .5) * 100; }
+  rainPos = pos;
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  rainPts = new THREE.Points(geo, new THREE.PointsMaterial({color: 0xbfe9ff, size: .5, transparent: true, opacity: .5, depthWrite: false}));
+  rainPts.visible = false; scene.add(rainPts);
+}
+
+function updateEnv(h, cloud) {
+  const key = h + '|' + Math.round(cloud * 4);
+  if (key === lastEnv) return;
+  lastEnv = key;
+  let phase, top, mid, bottom;
+  if (h >= 5 && h < 7)        { phase = '🌅 Amanecer'; top = '#2c2f63'; mid = '#c77a6b'; bottom = '#e7a76a'; }
+  else if (h >= 7 && h < 17)  { phase = '☀️ Día'; top = '#3d6fa8'; mid = '#8fb8d8'; bottom = '#e9d6b0'; }
+  else if (h >= 17 && h < 20) { phase = '🌇 Atardecer'; top = '#2a2d5e'; mid = '#b8626a'; bottom = '#f0a25e'; }
+  else                        { phase = '🌙 Noche'; top = '#050a18'; mid = '#1a2140'; bottom = '#2b2f4a'; }
+  if (cloud > .6) { top = '#3a4456'; mid = '#6d7585'; bottom = '#a9a7a4'; }
+  const root = document.documentElement.style;
+  root.setProperty('--sky-top', top); root.setProperty('--sky-mid', mid); root.setProperty('--sky-bottom', bottom);
+  if (scene) scene.fog.color.set(bottom);
+  $('timeLabel').textContent = `${phase} · ${pad(h)}:00`;
+}
+
+function rotorSpeedFromSlider() {
+  const v = num('windSpeed');
+  if (v < 3) return 0.05;
+  if (v > 25) return 2.2;
+  return 0.2 + (v / 25) * 2.0;
+}
+
+function update3D(d, t) {
+  const angle = Math.PI * (d.h - 6) / 12;
+  const daylight = Math.max(0, Math.sin(angle));
+  sunMesh.position.set(Math.cos(angle) * 90, 6 + daylight * 60, -120 + Math.sin(angle) * 20);
+  sunMesh.visible = daylight > 0;
+  sunLight.position.copy(sunMesh.position);
+  sunLight.intensity = (daylight > 0 ? 2.2 : .25) * (1 - .5 * d.cloud);
+  hemi.intensity = 1.3 * (1 - .4 * d.cloud);
+  updateEnv(d.h, d.cloud);
+
+  panelGroups.forEach(p => p.rotation.z = d.sunP > 0 ? -(d.h - 12) / 12 * .55 : 0);
+  panelMat.emissiveIntensity = .15 + .6 * d.irr;
+
+  const w = rotorSpeedFromSlider();
+  rotors.forEach(r => r.obj.rotation.x += dt * w);
+
+  const s = Math.max(.05, d.soc / 100);
+  batBar.scale.y = s; batBar.position.y = 0.5 + 1.5 * s;
+
+  clouds.forEach((g, i) => {
+    g.visible = i < Math.round(d.cloud * 6);
+    g.position.x = ((t * (1 + d.windSpeed * .3) + i * 50) % 300) - 150;
+  });
+
+  rainPts.visible = d.rain > .2;
+  if (rainPts.visible) {
+    rainPts.material.opacity = clamp(d.rain / 10, .15, .7);
+    const fall = dt * (30 + d.rain * 3);
+    for (let i = 0; i < rainPos.length; i += 3) {
+      rainPos[i + 1] -= fall;
+      if (rainPos[i + 1] < 0) rainPos[i + 1] = 50;
+    }
+    rainPts.geometry.attributes.position.needsUpdate = true;
+  }
+
+  const vals = [d.solar, d.wind, d.hydro, d.discharge, d.genset];
+  FLOW.forEach((f, pi) => {
+    const frac = clamp(vals[pi] / Math.max(1, f.max()), 0, 1);
+    const count = Math.round(frac * PER_PATH);
+    const speed = .05 + .25 * frac;
+    flowPool[pi].forEach((m, k) => {
+      m.visible = k < count;
+      if (m.visible) m.position.copy(flowCurves[pi].getPointAt(((t * speed) + k / Math.max(1, count)) % 1));
+    });
+  });
+
+  lampMats.forEach(m => m.emissiveIntensity = 1.5 + (d.h >= 17 || d.h < 6 ? 1.2 : 0));
+
+  if (followSun && sunMesh) camera.lookAt(sunMesh.position);
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  const now = performance.now();
+  dt = Math.min(.05, (now - lastT) / 1000); lastT = now;
+  if (data[current]) update3D(data[current], now / 1000);
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+function resize() {
+  const el = $('scene');
+  if (!renderer) return;
+  camera.aspect = el.clientWidth / el.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(el.clientWidth, el.clientHeight);
+}
+
+function fbNode(cx, cy, label, id) {
+  return `<rect x="${cx - 75}" y="${cy - 35}" width="150" height="70" rx="12" fill="#10263d" stroke="#31d7ff" stroke-width="2"/>` +
+    `<text x="${cx}" y="${cy - 6}" text-anchor="middle" fill="#edf6ff" font-size="14" font-weight="700">${label}</text>` +
+    `<text id="${id}" x="${cx}" y="${cy + 16}" text-anchor="middle" fill="#9bb0c6" font-size="13">—</text>`;
+}
+function showFallback(msg) {
+  const box = $('sceneLoading');
+  box.classList.remove('hidden');
+  box.style.background = '#071b2c';
+  box.style.display = 'block';
+  box.innerHTML = `
+    <div style="position:absolute;left:12px;right:12px;top:10px;font-size:12px;color:#ffb3c0;z-index:6">
+      ⚠️ Vista 3D no disponible: ${msg}. Mostrando esquema 2D en vivo.
+      <div id="fb-hour" style="color:#9bb0c6;margin-top:4px"></div>
+    </div>
+    <svg viewBox="0 0 640 520" preserveAspectRatio="xMidYMid meet" style="position:absolute;left:0;top:50px;width:100%;height:calc(100% - 50px)">
+      <rect x="20" y="20" width="600" height="480" rx="16" fill="none" stroke="#50e3a4" stroke-dasharray="6 4"/>
+      <path d="M110 130 L320 250" stroke="#ffd34d" stroke-width="4"/>
+      <path d="M530 130 L320 250" stroke="#b879ff" stroke-width="4"/>
+      <path d="M530 370 L320 250" stroke="#4ca7ff" stroke-width="4"/>
+      <path d="M320 250 L320 440" stroke="#31d7ff" stroke-width="4"/>
+      <path d="M110 370 L320 440" stroke="#ff4d6d" stroke-width="4"/>
+      ${fbNode(110, 130, '☀️ Solar', 'fb-solar')}
+      ${fbNode(530, 130, '🌬️ Eólica', 'fb-wind')}
+      ${fbNode(530, 370, '💧 Hídrica', 'fb-hydro')}
+      ${fbNode(110, 370, '⛽ Respaldo', 'fb-genset')}
+      ${fbNode(320, 250, '🔋 Batería', 'fb-soc')}
+      ${fbNode(320, 440, '🏠 Demanda', 'fb-dem')}
+    </svg>`;
+}
+function drawFallback(d) {
+  const box = $('sceneLoading');
+  if (!box || !box.querySelector('#fb-solar')) return;
+  const set = (id, t) => { const el = box.querySelector('#' + id); if (el) el.textContent = t; };
+  set('fb-hour', `Hora ${pad(d.h)}:00 · nubosidad ${fmt(d.cloud * 100, 0)}% · viento ${fmt(d.windSpeed)} m/s · lluvia ${fmt(d.rain)} mm/h · ${fmt(d.temp, 0)} °C`);
+  set('fb-solar', fmt(d.solar) + ' kW');
+  set('fb-wind', fmt(d.wind) + ' kW');
+  set('fb-hydro', fmt(d.hydro) + ' kW');
+  set('fb-genset', fmt(d.genset) + ' kW');
+  set('fb-soc', 'SOC ' + fmt(d.soc, 0) + '%');
+  set('fb-dem', fmt(d.demand) + ' kW');
+}
+
+/* ==================== GRÁFICOS ==================== */
+const CH = {};
+const hourMarker = {
+  id: 'hourMarker',
+  afterDraw(c) {
+    if (c.$hour == null || !c.scales.x || !c.chartArea) return;
+    const x = c.scales.x.getPixelForValue(c.$hour), {ctx, chartArea: a} = c;
+    ctx.save(); ctx.strokeStyle = '#31d7ff'; ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x, a.top); ctx.lineTo(x, a.bottom); ctx.stroke(); ctx.restore();
+  }
+};
+const donutCenter = {
+  id: 'donutCenter',
+  afterDraw(c) {
+    if (c.config.type !== 'doughnut' || !c.$total) return;
+    const {ctx, chartArea: a} = c, cx = (a.left + a.right) / 2, cy = (a.top + a.bottom) / 2;
+    ctx.save(); ctx.textAlign = 'center';
+    ctx.fillStyle = '#edf6ff'; ctx.font = '700 20px system-ui'; ctx.fillText(fmt(c.$total, 0) + ' kWh', cx, cy);
+    ctx.fillStyle = '#9bb0c6'; ctx.font = '12px system-ui'; ctx.fillText('total del día', cx, cy + 18);
+    ctx.restore();
+  }
+};
+function ds(label, color, extra = {}) {
+  return {label, data: [], borderColor: color, backgroundColor: color + '55', borderWidth: 2,
+    pointRadius: 0, pointHoverRadius: 4, tension: .3, ...extra};
+}
+function opts(unit, extraScales = {}, stacked = false) {
+  return {
+    responsive: true, maintainAspectRatio: false, animation: {duration: 450},
+    interaction: {mode: 'index', intersect: false},
+    plugins: {
+      legend: {labels: {color: '#cfe2f4', usePointStyle: true, boxWidth: 8}},
+      tooltip: {callbacks: {
+        title: items => items.length ? `Hora ${items[0].label}` : '',
+        label: c => ` ${c.dataset.label}: ${fmt(c.parsed.y)} ${c.dataset.unit || unit}`
+      }}
+    },
+    scales: {
+      x: {stacked: false, ticks: {color: '#9bb0c6', maxTicksLimit: 12}, grid: {color: '#19324a'}},
+      y: {stacked, ticks: {color: '#9bb0c6'}, grid: {color: '#19324a'}, title: {display: true, text: unit, color: '#9bb0c6'}},
+      ...extraScales
+    }
+  };
+}
+const rightAxis = (text, color, max) => ({
+  position: 'right', grid: {drawOnChartArea: false}, min: 0, max,
+  ticks: {color}, title: {display: true, text, color}
+});
+function seriesFor(name, upto) {
+  const cut = arr => arr.map((v, j) => j <= upto ? v : null);
+  const col = k => cut(data.map(x => x[k]));
+  switch (name) {
+    case 'energy':     return [col('solar'), col('wind'), col('hydro'), col('genset'), col('demand')];
+    case 'battery':    return [cut(data.map(x => x.charge)), cut(data.map(x => -x.discharge)), col('soc')];
+    case 'balance':    return [col('excess'), cut(data.map(x => -x.deficit)), col('bal')];
+    case 'mix':        return [['solar', 'wind', 'hydro', 'genset'].map(k => data.slice(0, upto + 1).reduce((a, x) => a + x[k], 0))];
+    case 'windRain':   return [col('windSpeed'), col('rain')];
+    case 'cloudTemp':  return [col('temp'), cut(data.map(x => x.cloud * 100))];
+  }
+}
+function chartsInit() {
+  if (typeof Chart === 'undefined') {
+    document.querySelectorAll('.cbox').forEach(b => b.innerHTML = '<p class="small" style="color:#ff637e">No se pudo cargar Chart.js.</p>');
+    return;
+  }
+  Chart.register(hourMarker, donutCenter);
+  CH.energy = new Chart($('energyChart'), {type: 'line', data: {labels: LABELS, datasets: [
+    ds('☀️ Solar', COL.solar, {fill: true, stack: 'gen', unit: 'kW'}),
+    ds('🌬️ Eólica', COL.wind, {fill: true, stack: 'gen', unit: 'kW'}),
+    ds('💧 Hidráulica', COL.hydro, {fill: true, stack: 'gen', unit: 'kW'}),
+    ds('⛽ Respaldo', COL.genset, {fill: true, stack: 'gen', unit: 'kW'}),
+    ds('🏠 Demanda', COL.demand, {stack: 'dem', fill: false, borderDash: [6, 4], borderWidth: 3, unit: 'kW'})
+  ]}, options: opts('kW', {}, true)});
+  CH.battery = new Chart($('batteryChart'), {type: 'bar', data: {labels: LABELS, datasets: [
+    ds('⬆ Carga', COL.charge, {type: 'bar', backgroundColor: COL.charge + 'cc', borderWidth: 0, borderRadius: 3, unit: 'kWh'}),
+    ds('⬇ Descarga', COL.discharge, {type: 'bar', backgroundColor: COL.discharge + 'cc', borderWidth: 0, borderRadius: 3, unit: 'kWh'}),
+    ds('🔋 SOC', COL.soc, {type: 'line', yAxisID: 'y1', borderWidth: 3, backgroundColor: COL.soc, unit: '%'})
+  ]}, options: opts('kWh', {y1: {...rightAxis('SOC %', COL.soc, 100), ticks: {color: COL.soc, callback: v => v + '%'}}})});
+  CH.balance = new Chart($('balanceChart'), {type: 'bar', data: {labels: LABELS, datasets: [
+    ds('➕ Excedente', COL.excess, {type: 'bar', backgroundColor: COL.excess + 'cc', borderWidth: 0, borderRadius: 3, unit: 'kW'}),
+    ds('➖ Déficit sin cubrir', COL.deficit, {type: 'bar', backgroundColor: COL.deficit + 'cc', borderWidth: 0, borderRadius: 3, unit: 'kW'}),
+    ds('Balance neto', COL.bal, {type: 'line', borderWidth: 2, borderDash: [4, 3], unit: 'kW'})
+  ]}, options: opts('kW')});
+  CH.mix = new Chart($('mixChart'), {type: 'doughnut', data: {labels: ['Solar', 'Eólica', 'Hidráulica', 'Respaldo'], datasets: [{
+    data: [0, 0, 0, 0], backgroundColor: [COL.solar, COL.wind, COL.hydro, COL.genset], borderWidth: 0, hoverOffset: 8
+  }]}, options: {
+    responsive: true, maintainAspectRatio: false, cutout: '64%', animation: {duration: 450},
+    plugins: {
+      legend: {position: 'right', labels: {color: '#cfe2f4', usePointStyle: true, boxWidth: 8}},
+      tooltip: {callbacks: {label: c => {
+        const t = c.dataset.data.reduce((a, b) => a + b, 0) || 1;
+        return ` ${c.label}: ${fmt(c.parsed, 0)} kWh (${fmt(c.parsed / t * 100, 0)}%)`;
+      }}}
+    }
+  }});
+  CH.windRain = new Chart($('windRainChart'), {type: 'line', data: {labels: LABELS, datasets: [
+    ds('💨 Viento', COL.wind, {unit: 'm/s', fill: false}),
+    ds('🌧️ Lluvia', COL.rain, {type: 'bar', yAxisID: 'y1', backgroundColor: COL.rain + '99', borderWidth: 0, borderRadius: 3, unit: 'mm/h'})
+  ]}, options: opts('m/s', {y1: rightAxis('mm/h', COL.rain, null)})});
+  CH.cloudTemp = new Chart($('cloudTempChart'), {type: 'line', data: {labels: LABELS, datasets: [
+    ds('🌡️ Temperatura', COL.temp, {unit: '°C', borderWidth: 3}),
+    ds('☁️ Nubosidad', COL.cloud, {unit: '%', yAxisID: 'y1', fill: true, backgroundColor: COL.cloud + '44'})
+  ]}, options: opts('°C', {y1: rightAxis('Nubosidad %', COL.cloud, 100)})});
+  drawCharts(23, current);
+}
+function drawCharts(upto = 23, marker = current) {
+  for (const [name, ch] of Object.entries(CH)) {
+    const s = seriesFor(name, upto);
+    s.forEach((arr, i) => { if (ch.data.datasets[i]) ch.data.datasets[i].data = arr; });
+    if (name === 'mix') ch.$total = s[0].reduce((a, b) => a + b, 0);
+    ch.$hour = name === 'mix' ? null : marker;
+    ch.update('none');
+  }
+}
+function setMarkers(marker) {
+  for (const [name, ch] of Object.entries(CH)) {
+    if (name === 'mix') continue;
+    ch.$hour = marker; ch.update('none');
+  }
+}
+
+function renderTable() {
+  $('tbody').innerHTML = data.map(x => `<tr>
+    <td>${pad(x.h)}:00</td><td>${fmt(x.solar)}</td><td>${fmt(x.wind)}</td><td>${fmt(x.hydro)}</td>
+    <td>${fmt(x.genset)}</td><td>${fmt(x.gen)}</td><td>${fmt(x.demand)}</td><td>${fmt(x.excess)}</td>
+    <td>${fmt(x.deficit)}</td><td>${fmt(x.cloud * 100, 0)}%</td><td>${fmt(x.temp, 0)}°C</td><td>${fmt(x.soc)}%</td>
+  </tr>`).join('');
+}
+function updateUI(full = true) {
+  const d = data[current];
+  if (!d) return;
+  $('hour').value = current;
+  if (!renderer) drawFallback(d);
+  $('hudHour').textContent = pad(d.h) + ':00';
+  $('hudSolar').textContent = fmt(d.solar);
+  $('hudWind').textContent = fmt(d.wind);
+  $('hudHydro').textContent = fmt(d.hydro);
+  $('hudGenset').textContent = fmt(d.genset);
+  $('hudSoc').textContent = fmt(d.soc, 0) + '%';
+  $('hudCloud').textContent = fmt(d.cloud * 100, 0) + '%';
+  $('hudTemp').textContent = fmt(d.temp, 0) + '°C';
+  $('hudRain').textContent = fmt(d.rain) + ' mm/h';
+  $('mGen').textContent = fmt(d.gen) + ' kW';
+  $('mDem').textContent = fmt(d.demand) + ' kW';
+  $('mBal').textContent = fmt(d.bal) + ' kW';
+  $('mSoc').textContent = fmt(d.soc) + '%';
+  $('weatherNow').innerHTML = `<b>Clima ${pad(d.h)}:00:</b> ☁️ nubosidad ${fmt(d.cloud * 100, 0)}% · 💨 viento ${fmt(d.windSpeed)} m/s ` +
+    `· 🌧️ lluvia ${fmt(d.rain)} mm/h · 🌡️ ${fmt(d.temp, 1)} °C · caudal hídrico ${fmt(d.hydroF * 100, 0)}% · demanda ${fmt(d.demand)} kW`;
+  document.querySelectorAll('#tbody tr').forEach((tr, i) => tr.classList.toggle('active', i === current));
+  if (full) drawCharts(23, current); else setMarkers(current);
+  if (window.ecoChatRefresh) window.ecoChatRefresh();
+}
+function rebuild() {
+  genWeather();
+  data = simulate();
+  current = Math.min(current, 23);
+  renderTable();
+  updateUI(true);
+}
+
+function speak(text) { speakJarvis(text); }
+function explainHour() {
+  if (speechSynthesis.speaking) { speechSynthesis.cancel(); return; }
+  const d = data[current];
+  if (!d) return;
+  speakJarvis(`Son las ${d.h} horas. Hay ${fmt(d.cloud * 100, 0)} por ciento de nubosidad y la temperatura es de ${fmt(d.temp, 0)} grados. ` +
+    `Los paneles producen ${fmt(d.solar)} kilovatios. La eólica aporta ${fmt(d.wind)} kilovatios con viento de ${fmt(d.windSpeed)} metros por segundo. ` +
+    `La hidráulica aporta ${fmt(d.hydro)} kilovatios. La demanda es de ${fmt(d.demand)} kilovatios y la batería está al ${fmt(d.soc, 0)} por ciento.`);
+}
+
+let informePendiente = false, informeTimeout = null;
+window.addEventListener('message', e => {
+  if (!e.data || e.data.type !== 'MICRORED_INFORME_RESULTADO' || !informePendiente) return;
+  clearTimeout(informeTimeout);
+  informePendiente = false;
+  $('reportBtn').disabled = false;
+  $('reportStatus').textContent = e.data.ok
+    ? `¡Informe generado! PDF enviado a ${e.data.email || $('reportEmail').value.trim()}. ID: ${e.data.id || 'generado'}. Revisa spam.`
+    : 'Apps Script no pudo completar el informe: ' + (e.data.mensaje || 'error no especificado') + '.';
+});
+function generarYEnviarInforme() {
+  const boton = $('reportBtn'), estado = $('reportStatus'), email = $('reportEmail').value.trim();
+  if (APPS_SCRIPT_URL.indexOf('script.google.com/macros/s/') !== 0) {
+    estado.textContent = 'Primero configura APPS_SCRIPT_URL con la URL /exec de tu implementación.'; return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { estado.textContent = 'Escribe un correo válido.'; return; }
+  if (informePendiente) return;
+  const total = k => data.reduce((a, x) => a + (Number(x[k]) || 0), 0);
+  const demandaTotal = total('demand'), deficitTotal = total('deficit');
+  const payload = {
+    email,
+    configuracion: {
+      capacidadBateria: num('cap'), socInicial: num('soc0'), eficienciaCarga: num('etaC'), eficienciaDescarga: num('etaD'),
+      solarMax: num('solarMax'), eolicaMax: num('windMax'), hidraulicaMax: num('hydroMax'), respaldoMax: num('gensetMax'),
+      demandaBase: num('demandBase'), velocidadVientoMedia: num('windSpeed'), temperaturaMedia: num('tMean'),
+      lluviaMax: num('rainMax'), escenarioClima: $('preset').value, semilla: num('seed')
+    },
+    resumen: {
+      generacionTotal: total('gen'), demandaTotal, excedenteTotal: total('excess'), deficitTotal,
+      respaldoTotal: total('genset'), energiaCargada: total('charge'), energiaDescargada: total('discharge'),
+      socFinal: data[23].soc,
+      coberturaRenovable: demandaTotal > 0 ? clamp((demandaTotal - deficitTotal - total('genset')) / demandaTotal * 100, 0, 100) : 100
+    },
+    resultados: data.map(x => ({h: x.h, solar: x.solar, wind: x.wind, hydro: x.hydro, genset: x.genset, gen: x.gen,
+      demand: x.demand, bal: x.bal, excess: x.excess, deficit: x.deficit, charge: x.charge, discharge: x.discharge,
+      soc: x.soc, nubosidad: x.cloud, lluvia: x.rain, temperatura: x.temp, viento: x.windSpeed}))
+  };
+  let frame = $('microredReportFrame');
+  if (!frame) {
+    frame = Object.assign(document.createElement('iframe'),
+      {name: 'microredReportFrame', id: 'microredReportFrame', title: 'Respuesta del servicio de informes'});
+    frame.style.display = 'none'; document.body.appendChild(frame);
+  }
+  const form = document.createElement('form');
+  form.method = 'POST'; form.action = APPS_SCRIPT_URL; form.target = 'microredReportFrame';
+  form.acceptCharset = 'UTF-8'; form.style.display = 'none';
+  form.appendChild(Object.assign(document.createElement('input'), {type: 'hidden', name: 'payload', value: JSON.stringify(payload)}));
+  document.body.appendChild(form);
+  informePendiente = true; boton.disabled = true;
+  estado.textContent = 'Enviando la simulación, guardando en Google Sheets y generando el PDF…';
+  form.submit();
+  setTimeout(() => form.remove(), 1000);
+  informeTimeout = setTimeout(() => {
+    if (!informePendiente) return;
+    informePendiente = false; boton.disabled = false;
+    estado.textContent = 'Se envió pero no llegó confirmación. Revisa "Ejecuciones" en Apps Script y tu correo antes de reenviar.';
+  }, 45000);
+}
+
+function exportCSV() {
+  const lines = ['Hora,Solar kW,Eolica kW,Hidraulica kW,Respaldo kW,Generacion kW,Demanda kW,Excedente kW,Deficit kW,Carga kWh,Descarga kWh,SOC %,Nubosidad %,Lluvia mm/h,Temp C,Viento m/s'];
+  data.forEach(x => lines.push([x.h, x.solar, x.wind, x.hydro, x.genset, x.gen, x.demand, x.excess, x.deficit,
+    x.charge, x.discharge, x.soc, x.cloud * 100, x.rain, x.temp, x.windSpeed]
+    .map((v, i) => i ? Number(v).toFixed(2) : v).join(',')));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([lines.join('\n')], {type: 'text/csv'}));
+  a.download = 'simulacion_microrred_3D.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+let simTimer = null, playing = false;
+function setPlayState(p) {
+  playing = p;
+  $('play').textContent = p ? '⏸ Pausar 24 h' : '▶ Iniciar 24 h';
+  $('pause').disabled = !p;
+}
+function stopSim() { clearInterval(simTimer); simTimer = null; setPlayState(false); }
+
+let current = 6;
+genWeather();
+data = simulate();
+init3D();
+chartsInit();
+renderTable();
+updateUI(true);
+
+/* ============================================================
+   SLIDERS: recálculo inmediato + narración
+   ============================================================ */
+const SLIDERS = [
+  ['cap','capV', v => v + ' kWh'],
+  ['soc0','soc0V', v => v + ' %'],
+  ['etaC','etaCV', v => (+v).toFixed(2)],
+  ['etaD','etaDV', v => (+v).toFixed(2)],
+  ['solarMax','solarMaxV', v => v + ' kW'],
+  ['windMax','windMaxV', v => v + ' kW'],
+  ['hydroMax','hydroMaxV', v => v + ' kW'],
+  ['gensetMax','gensetMaxV', v => v + ' kW'],
+  ['demandBase','demandBaseV', v => v + ' kW'],
+  ['windSpeed','windSpeedV', v => v + ' m/s'],
+  ['tMean','tMeanV', v => (+v).toFixed(1) + ' °C'],
+  ['rainMax','rainMaxV', v => v + ' mm/h']
+];
+function paintSlider(el) {
+  const min = +el.min || 0, max = +el.max || 100, val = +el.value;
+  const pct = ((val - min) / (max - min)) * 100;
+  el.style.setProperty('--fill', pct + '%');
+}
+function updateSliderLabel(id, outId, fmtFn) {
+  const el = $(id); if (!el) return;
+  paintSlider(el);
+  const out = $(outId); if (out) out.textContent = fmtFn(el.value);
+}
+
+const SLIDER_NAMES = {
+  cap: 'Capacidad de la batería',
+  soc0: 'Estado inicial de carga',
+  etaC: 'Eficiencia de carga',
+  etaD: 'Eficiencia de descarga',
+  solarMax: 'Potencia solar máxima',
+  windMax: 'Potencia eólica máxima',
+  hydroMax: 'Potencia hidráulica máxima',
+  gensetMax: 'Potencia del respaldo',
+  demandBase: 'Demanda base',
+  windSpeed: 'Velocidad media del viento',
+  tMean: 'Temperatura media',
+  rainMax: 'Lluvia máxima'
+};
+const IMPACT_HINTS = {
+  solarMax:   (v) => v > 80 ? 'Aumenta la generación solar disponible.' : 'Reduce la generación solar disponible.',
+  windMax:    (v) => v > 50 ? 'El parque eólico podrá aportar más potencia.' : 'El parque eólico aportará menos.',
+  hydroMax:   (v) => v > 40 ? 'La turbina hídrica puede entregar más caudal.' : 'La turbina hídrica entregará menos.',
+  gensetMax:  (v) => v > 50 ? 'El grupo de respaldo podrá cubrir más déficit.' : 'El grupo de respaldo cubrirá menos.',
+  demandBase: (v) => v > 80 ? 'La demanda será más exigente: probable uso de batería y respaldo.' : 'La demanda será más suave.',
+  cap:        (v) => v > 200 ? 'La batería almacenará mucho más excedente.' : 'La batería tendrá menor margen.',
+  soc0:       (v) => v > 70 ? 'Arrancas con la batería cargada.' : 'Arrancas con poca carga.',
+  etaC:       (v) => v > 0.9 ? 'Carga muy eficiente.' : 'Parte de la energía se perderá al cargar.',
+  etaD:       (v) => v > 0.9 ? 'Descarga muy eficiente.' : 'Parte de la energía se perderá al descargar.',
+  windSpeed:  (v) => v > 12 ? 'Viento fuerte: las aspas girarán más rápido y la eólica sube.' : v < 3 ? 'Viento muy bajo: las aspas casi no girarán.' : 'Viento moderado: aspas girando a velocidad media.',
+  tMean:      (v) => v > 30 ? 'Más calor: sube la demanda y baja la eficiencia solar.' : v < 10 ? 'Frío: también sube la demanda.' : 'Temperatura agradable.',
+  rainMax:    (v) => v > 15 ? 'Lluvia intensa: más caudal hídrico con retardo.' : 'Lluvia moderada.'
+};
+
+function announceSlider(id, valueText) {
+  if (!window.ecoChatNarrate) return;
+  const name = SLIDER_NAMES[id] || id;
+  const hintFn = IMPACT_HINTS[id];
+  const hint = hintFn ? hintFn(Number($(id).value)) : '';
+  window.ecoChatNarrate(`Has ajustado ${name} a ${valueText}. ${hint}`);
+}
+
+SLIDERS.forEach(([id, outId, fmtFn]) => {
+  const el = $(id); if (!el) return;
+  paintSlider(el);
+  const out = $(outId); if (out) out.textContent = fmtFn(el.value);
+  let debounce = null;
+  el.addEventListener('input', () => {
+    updateSliderLabel(id, outId, fmtFn);
+    data = simulate();
+    current = Math.min(current, 23);
+    renderTable();
+    updateUI(true);
+    clearTimeout(debounce);
+    debounce = setTimeout(() => announceSlider(id, fmtFn(el.value)), 250);
+  });
+});
+
+/* ============================================================
+   NARRADOR PARA EL RESTO DE CONTROLES
+   ============================================================ */
+function announce(msg) { if (window.ecoChatNarrate) window.ecoChatNarrate(msg); }
+
+$('hour').addEventListener('input', e => {
+  stopSim();
+  current = +e.target.value;
+  updateUI(true);
+  clearTimeout(window.__narrHour);
+  window.__narrHour = setTimeout(() => announce(`Has cambiado la hora a las ${pad(current)}:00. La generación y la demanda se actualizan.`), 300);
+});
+
+$('preset').addEventListener('change', () => {
+  const names = {clear:'Despejado', partly:'Parcialmente nublado', cloudy:'Nublado', storm:'Tormenta'};
+  rebuild();
+  announce(`Has cambiado el escenario climático a ${names[$('preset').value] || 'personalizado'}. La nubosidad, la lluvia y el viento se recalculan.`);
+});
+$('seed').addEventListener('change', () => { rebuild(); announce(`Semilla climática cambiada a ${$('seed').value}. Se generó un clima distinto.`); });
+
+$('newWeather').onclick = () => {
+  $('seed').value = num('seed') + 1;
+  rebuild();
+  announce(`Nuevo clima generado con semilla ${$('seed').value}. La simulación de las 24 horas se recalculó.`);
+};
+$('reset').onclick = () => {
+  stopSim(); current = 6; updateUI(true);
+  announce('Has reiniciado la simulación a las 06:00.');
+};
+$('play').onclick = () => {
+  if (playing) return;
+  setPlayState(true);
+  announce('Reproduciendo la simulación de 24 horas.');
+  simTimer = setInterval(() => {
+    current = (current + 1) % 24;
+    updateUI(true);
+    if (current === 0) announce('La simulación de 24 horas ha terminado el ciclo.');
+  }, 900);
+};
+$('pause').onclick = () => { stopSim(); announce('Simulación pausada.'); };
+$('follow').onclick = () => {
+  followSun = !followSun;
+  if (controls) controls.enabled = !followSun;
+  $('follow').setAttribute('aria-pressed', followSun);
+  $('follow').textContent = followSun ? '☀️ Sol activo' : '☀️ Seguir Sol';
+  announce(followSun ? 'Cámara siguiendo al Sol.' : 'Cámara liberada. Puedes rotar la escena.');
+};
+$('explain').onclick = () => { explainHour(); announce('Leyendo la explicación de la hora actual.'); };
+$('theme').onclick = () => {
+  document.body.classList.toggle('light');
+  lastEnv = null;
+  updateEnv(data[current].h, data[current].cloud);
+  announce(document.body.classList.contains('light') ? 'Has activado el tema claro.' : 'Has activado el tema oscuro.');
+};
+$('csv').onclick = () => { exportCSV(); announce('Has exportado la simulación a CSV.'); };
+$('printBtn').onclick = () => { window.print(); };
+
+/* ===== NARRACIÓN DE TODO LO QUE SE TOCA ===== */
+function zoneOf(p) {
+  const x = p.x, z = p.z;
+  if (x < -40 && z < -5) return {n: 'los aerogeneradores', i: d => `La eólica aporta ${fmt(d.wind)} kW con viento de ${fmt(d.windSpeed)} metros por segundo.`};
+  if (z < -40 && x > -30 && x < 42) return {n: 'los silos de almacenamiento hídrico', i: d => `La hidráulica aporta ${fmt(d.hydro)} kW, con caudal al ${fmt(d.hydroF * 100, 0)} por ciento.`};
+  if (x > -40 && x < -5 && z > -20 && z < -2) return {n: 'la nave del grupo electrógeno de respaldo', i: d => `El respaldo aporta ${fmt(d.genset)} kW.`};
+  if (x > -20 && x < -8 && z > 8 && z < 20) return {n: 'el sistema de baterías', i: d => `La batería está al ${fmt(d.soc, 0)} por ciento.`};
+  if (x < -48 && z > 14) return {n: 'el edificio de demanda', i: d => `La demanda es de ${fmt(d.demand)} kW.`};
+  if (x > -2 && x < 56 && z > -22 && z < 30) return {n: 'el campo de paneles solares', i: d => `Los paneles producen ${fmt(d.solar)} kW.`};
+  return {n: 'el terreno de la microrred', i: () => ''};
+}
+const raycaster = new THREE.Raycaster();
+const ptr = new THREE.Vector2();
+if (renderer) renderer.domElement.addEventListener('click', ev => {
+  if (!camera || !data[current]) return;
+  const r = renderer.domElement.getBoundingClientRect();
+  ptr.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+  raycaster.setFromCamera(ptr, camera);
+  const hit = raycaster.intersectObjects(scene.children, true).find(h => !(h.object.material && h.object.material.transparent));
+  if (!hit) return;
+  const d = data[current], z = zoneOf(hit.point);
+  announce(`Has tocado ${z.n} a las ${pad(current)}:00. ${z.i(d)}`.trim());
+});
+
+const CHART_TXT = {
+  energy: d => `generación total ${fmt(d.gen)} kW y demanda ${fmt(d.demand)} kW`,
+  battery: d => `batería al ${fmt(d.soc, 0)} por ciento, carga ${fmt(d.charge)} kWh y descarga ${fmt(d.discharge)} kWh`,
+  balance: d => `excedente ${fmt(d.excess)} kW y déficit sin cubrir ${fmt(d.deficit)} kW`,
+  windRain: d => `viento ${fmt(d.windSpeed)} m/s y lluvia ${fmt(d.rain)} mm/h`,
+  cloudTemp: d => `nubosidad ${fmt(d.cloud * 100, 0)} por ciento y temperatura ${fmt(d.temp, 0)} grados`
+};
+const CHART_NAME = {energy: 'Generación por fuente', battery: 'Batería', balance: 'Excedente y déficit', mix: 'Mezcla de energía', windRain: 'Viento y lluvia', cloudTemp: 'Nubosidad y temperatura'};
+const SRC = [['solar', 'solar'], ['wind', 'eólica'], ['hydro', 'hidráulica'], ['genset', 'respaldo']];
+Object.entries(CH).forEach(([name, ch]) => {
+  ch.options.onClick = evt => {
+    const els = ch.getElementsAtEventForMode(evt, name === 'mix' ? 'nearest' : 'index', {intersect: false}, false);
+    if (!els.length) return;
+    if (name === 'mix') {
+      const [k, lbl] = SRC[els[0].index];
+      const tot = data.reduce((a, x) => a + x[k], 0);
+      announce(`Mezcla de energía: ${lbl}, ${fmt(tot, 0)} kWh en el día.`);
+      return;
+    }
+    current = els[0].index; stopSim(); updateUI(true);
+    announce(`Gráfico ${CHART_NAME[name]}, a las ${pad(current)}:00: ${CHART_TXT[name](data[current])}.`);
+  };
+});
+
+$('tbody').addEventListener('click', e => {
+  const tr = e.target.closest('tr');
+  if (!tr) return;
+  const idx = [...tr.parentNode.children].indexOf(tr);
+  if (idx < 0) return;
+  stopSim(); current = idx; updateUI(true);
+  const d = data[current];
+  announce(`Has seleccionado la fila de las ${pad(d.h)}:00. Generación ${fmt(d.gen)} kW, demanda ${fmt(d.demand)} kW, batería al ${fmt(d.soc, 0)} por ciento.`);
+});
+
+$('reportBtn').addEventListener('click', () => announce('Generando y enviando el informe de la simulación.'));
+$('reportBtn').onclick = generarYEnviarInforme;
+
+document.addEventListener('keydown', e => {
+  if (['INPUT','SELECT','TEXTAREA','BUTTON'].includes(e.target.tagName)) return;
+  if (e.key === 'ArrowRight') { current = (current + 1) % 24; updateUI(true); }
+  else if (e.key === 'ArrowLeft') { current = (current + 23) % 24; updateUI(true); }
+  else if (e.key === ' ') { e.preventDefault(); playing ? stopSim() : $('play').click(); }
+});
+if (APPS_SCRIPT_URL.indexOf('script.google.com') === -1) {
+  $('reportBtn').disabled = true;
+  $('reportBtn').title = 'Configura APPS_SCRIPT_URL';
+  $('reportStatus').textContent = '⚠️ Informes por correo deshabilitados: falta configurar Apps Script. Usa "Imprimir / PDF local".';
+}
+</script>
+
+<!-- ============================================================
+     ASISTENTE: RESPONDE PREGUNTAS SOBRE EL SIMULADOR Y LO NARRA
+     ============================================================ -->
+<button id="ecoChatToggle" aria-label="Abrir asistente" aria-expanded="false">
+  <span class="eco-chat-icon">💬</span>
+  <span class="eco-chat-badge" id="ecoChatBadge" hidden>1</span>
+</button>
+
+<div id="ecoChatPanel" role="dialog" aria-labelledby="ecoChatTitle" aria-hidden="true">
+  <header class="eco-chat-header">
+    <div class="eco-chat-avatar">🤖</div>
+    <div class="eco-chat-title-wrap">
+      <strong id="ecoChatTitle">Asistente</strong>
+      <small><span class="eco-status-dot"></span> En línea · responde y narra tus acciones</small>
+    </div>
+    <button id="ecoChatClose" aria-label="Cerrar">✕</button>
+  </header>
+
+  <div id="ecoChatMessages" class="eco-chat-messages" role="log" aria-live="polite"></div>
+  <div id="ecoChatSuggestions" class="eco-chat-suggestions"></div>
+
+  <form id="ecoChatForm" class="eco-chat-form" autocomplete="off">
+    <input id="ecoChatInput" type="text" placeholder="Pregunta sobre el simulador…" aria-label="Tu pregunta" maxlength="200">
+    <button type="submit" aria-label="Enviar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </form>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  let KNOWLEDGE = [];
+  let SIM_SNAPSHOT = null;
+  const voiceOn = true;
+  let pendingNarration = null;
+
+  const STOPWORDS = new Set(['de','la','el','los','las','un','una','que','y','o','en','con','por','para','del','al','es','son','como','cual','cuales','cuando','donde','porque','sobre','su','sus','se','lo','le','mi','tu','me','te','nos','ya','mas','pero','sin','muy','este','esta','estos','estas','esto','ese','esa','ser','estar','hace','hacer','tiene','tienen','puede','pueden','hola','gracias','favor','dime','dame','quiero','saber']);
+
+  const normalize = s => String(s).toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\w\sñ]/g, ' ').replace(/\s+/g, ' ').trim();
+  const tokens = s => normalize(s).split(' ').filter(w => w.length > 2 && !STOPWORDS.has(w));
+
+  function buildKnowledge() {
+    const chunks = [], seen = new Set();
+    document.querySelectorAll('section, .card, .metric, .stat, .info, aside, .weathernow').forEach(sec => {
+      const titleEl = sec.querySelector('h1, h2, h3, h4, b, strong');
+      const title = titleEl ? titleEl.textContent.trim() : '';
+      const texts = [];
+      sec.querySelectorAll('p, li, .info, .small, label, .slider-val').forEach(el => {
+        const t = el.textContent.replace(/\s+/g, ' ').trim();
+        if (t.length > 2 && !seen.has(t)) { texts.push(t); seen.add(t); }
+      });
+      if (title || texts.length) chunks.push({title: title || 'Información', text: [title, ...texts].join(' ').slice(0, 1400)});
+    });
+    return chunks;
+  }
+
+  function readSimulationState() {
+    const el = id => document.getElementById(id);
+    const txt = id => el(id) ? el(id).textContent.trim() : '';
+    const val = id => el(id) ? el(id).value : '';
+    const hour = parseInt(val('hour'), 10);
+    if (isNaN(hour) || !el('mGen')) return null;
+    const d = (window.__currentRow) || null;
+    return {
+      hour,
+      solar: txt('hudSolar'), wind: txt('hudWind'), hydro: txt('hudHydro'), genset: txt('hudGenset'),
+      soc: txt('hudSoc'), cloud: txt('hudCloud'), temp: txt('hudTemp'), rain: txt('hudRain'),
+      gen: txt('mGen'), dem: txt('mDem'), bal: txt('mBal'), socM: txt('mSoc'),
+      cap: val('cap'), solarMax: val('solarMax'), windMax: val('windMax'),
+      hydroMax: val('hydroMax'), gensetMax: val('gensetMax'),
+      demandBase: val('demandBase'), windSpeed: val('windSpeed'),
+      tMean: val('tMean'), rainMax: val('rainMax'),
+      etaC: val('etaC'), etaD: val('etaD'), preset: el('preset') ? el('preset').value : '',
+      seed: val('seed'), solarOut: d ? d.solar : null
+    };
+  }
+
+  const h2 = s => String(s.hour).padStart(2, '0');
+
+  /* ==================== RESPUESTAS SOBRE EL SIMULADOR ==================== */
+  function simulationAnswer(question) {
+    const q = normalize(question);
+    const s = SIM_SNAPSHOT;
+    if (!s) return null;
+
+    if (/(parametro|parámetro|configuracion|configuración|sliders|controles|ajustes)/.test(q)) {
+      return `Configuración actual:\n` +
+        `🔋 Batería: ${s.cap} kWh, SOC inicial ${s.soc0 || ''}%, eficiencia carga ${s.etaC}, descarga ${s.etaD}\n` +
+        `⚡ Solar máx: ${s.solarMax} kW · Eólica máx: ${s.windMax} kW · Hidráulica: ${s.hydroMax} kW · Respaldo: ${s.gensetMax} kW\n` +
+        `🏠 Demanda base: ${s.demandBase} kW\n` +
+        `🌦️ Escenario: ${s.preset}, semilla ${s.seed}, viento ${s.windSpeed} m/s, temperatura ${s.tMean} °C, lluvia máx ${s.rainMax} mm/h`;
+    }
+    if (/(estado|actual|ahora|momento|resumen|como esta|cómo está|que pasa|qué pasa)/.test(q)) {
+      return `Estado de las ${h2(s)}:00:\n` +
+             `☀️ Solar: ${s.solar} kW · 🌬️ Eólica: ${s.wind} kW · 💧 Hidráulica: ${s.hydro} kW\n` +
+             `⛽ Respaldo: ${s.genset} kW · 🏠 Demanda: ${s.dem} kW · ⚖️ Balance: ${s.bal} kW\n` +
+             `🔋 SOC: ${s.socM} · ☁️ ${s.cloud} · 🌡️ ${s.temp} · 🌧️ ${s.rain}`;
+    }
+    if (/(clima|nubosidad|nube|temperatura|calor|frio|frío|lluvia|escenario|semilla)/.test(q)) {
+      return `Clima de las ${h2(s)}:00:\n☁️ Nubosidad: ${s.cloud}\n🌡️ Temperatura: ${s.temp}\n🌧️ Lluvia: ${s.rain}\n` +
+             `💨 Viento medio configurado: ${s.windSpeed} m/s\nEscenario: ${s.preset}, semilla ${s.seed}.\n` +
+             `El clima afecta la radiación solar, el viento, el caudal hídrico y la demanda por temperatura.`;
+    }
+    if (/(viento|aspa|aspas|rotor|giro|girar|aerogenerador|eolica|eólica)/.test(q)) {
+      return `Eólica actual: ${s.wind} kW (máximo ${s.windMax} kW), con viento medio configurado de ${s.windSpeed} m/s. ` +
+             `Las aspas giran más rápido con más viento: por debajo de 3 m/s casi no giran; a partir de 12 m/s la potencia es nominal; por encima de 25 m/s se detienen por seguridad.`;
+    }
+    if (/(bateria|batería|soc|carga|descarga|almacen)/.test(q)) {
+      return `La batería está al ${s.socM} de sus ${s.cap} kWh. Eficiencia de carga ${s.etaC}, de descarga ${s.etaD}. ` +
+             `Cuando hay excedente se carga; cuando hay déficit se descarga antes de usar el respaldo.`;
+    }
+    if (/(solar|sol|panel|paneles|radiacion|radiación)/.test(q)) {
+      return `Solar actual: ${s.solar} kW (máximo ${s.solarMax} kW). Depende de la hora, la nubosidad y la temperatura. ` +
+             `Los paneles se inclinan siguiendo al Sol durante el día.`;
+    }
+    if (/(hidraulica|hidráulica|agua|caudal|silo|embalse|tanque)/.test(q)) {
+      return `Hidráulica actual: ${s.hydro} kW (máximo ${s.hydroMax} kW). La lluvia aumenta el caudal con retardo, así que tras una tormenta sube la generación.`;
+    }
+    if (/(respaldo|genset|generador|grupo|electrogeno|electrógeno|nave|hangar|gas|diesel)/.test(q)) {
+      return `El grupo de respaldo aporta ${s.genset} kW (máximo ${s.gensetMax} kW). Solo entra cuando la batería no alcanza a cubrir la demanda.`;
+    }
+    if (/(demanda|consumo|edificio|carga)/.test(q)) {
+      return `Demanda actual: ${s.dem} kW (base ${s.demandBase} kW). Sube con el calor y el frío por la climatización.`;
+    }
+    if (/(balance|excedente|deficit|déficit|sobra|falta)/.test(q)) {
+      return `Balance actual: ${s.bal} kW. Positivo significa excedente, que carga la batería. Negativo significa déficit: primero descarga la batería y después entra el respaldo. Si aun así falta, queda como déficit sin cubrir.`;
+    }
+    if (/(total|dia|día|hoy|24)/.test(q)) {
+      return `Simulación de 24 horas. Para ver cada hora, mueve el control de hora o toca una fila de la tabla. La hora actual es ${h2(s)}:00.`;
+    }
+    if (/(grafic|gráfic|tabla|mezcla|resultado)/.test(q)) {
+      return `Los gráficos muestran generación por fuente, batería, excedente y déficit, mezcla del día, viento con lluvia, y nubosidad con temperatura. ` +
+             `Toca un punto de un gráfico o una fila de la tabla para ir a esa hora y escuchar el detalle.`;
+    }
+    if (/(informe|correo|pdf|csv|exportar|imprimir)/.test(q)) {
+      return `Puedes exportar la simulación a CSV o imprimirla como PDF desde el navegador. El envío por correo requiere configurar Apps Script.`;
+    }
+    return null;
+  }
+
+  function specialResponse(question) {
+    const q = normalize(question);
+    if (/^(hola|buenas|hey|saludos|que tal|buenos)/.test(q))
+      return 'Hola. Soy el asistente del simulador. Puedo responder preguntas sobre la hora, el clima, la generación, la batería, la demanda y los controles, y narro lo que toques.';
+    if (/(ayuda|help|que puedes|qué puedes|como usar|cómo usar)/.test(q))
+      return 'Puedes preguntarme por el estado actual, el clima, el viento, la batería, la solar, la hidráulica, el respaldo, la demanda, el balance, los gráficos o los parámetros. También narro cada ajuste, botón, gráfico o elemento de la escena que toques.';
+    if (/(gracias|thanks|genial|perfecto)/.test(q))
+      return 'Con gusto. ¿Necesitas algo más del simulador?';
+    if (/(adios|adiós|chao|hasta luego|bye)/.test(q))
+      return 'Hasta luego. Aquí estaré cuando lo necesites.';
+    if (/(quien eres|quién eres|que eres|qué eres)/.test(q))
+      return 'Soy el asistente del simulador. Leo el estado actual de la microrred y respondo con esos datos. No uso internet.';
+    return null;
+  }
+
+  function findAnswer(question) {
+    if (!KNOWLEDGE.length) return null;
+    const qTokens = tokens(question);
+    if (!qTokens.length) return null;
+    let best = null, bestScore = 0;
+    for (const chunk of KNOWLEDGE) {
+      const haystack = normalize(chunk.title + ' ' + chunk.text);
+      let score = 0;
+      for (const tok of qTokens) if (haystack.includes(tok)) score += tok.length;
+      const titleNorm = normalize(chunk.title);
+      for (const tok of qTokens) if (titleNorm.includes(tok)) score += 5;
+      score = score / Math.sqrt(chunk.text.length + 50);
+      if (score > bestScore) { bestScore = score; best = chunk; }
+    }
+    return bestScore >= 0.22 ? best : null;
+  }
+
+  function cleanAnswer(text) {
+    let out = text.trim();
+    if (out.length > 380) {
+      const cut = out.slice(0, 380);
+      const lastDot = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('.'));
+      out = lastDot > 150 ? cut.slice(0, lastDot + 1) : cut + '…';
+    }
+    return out;
+  }
+
+  function fallbackAnswer() {
+    const s = SIM_SNAPSHOT;
+    if (!s) return 'No pude leer el simulador. Intenta de nuevo en un momento.';
+    return `No entendí la pregunta, pero esto es lo que hay ahora (${h2(s)}:00):\n` +
+           `☀️ Solar: ${s.solar} kW · 🌬️ Eólica: ${s.wind} kW · 💧 Hídrica: ${s.hydro} kW\n` +
+           `⛽ Respaldo: ${s.genset} kW · 🏠 Demanda: ${s.dem} kW · ⚖️ Balance: ${s.bal} kW\n` +
+           `🔋 SOC: ${s.socM} · ☁️ ${s.cloud} · 🌡️ ${s.temp} · 🌧️ ${s.rain}\n` +
+           `Prueba preguntando por el clima, la batería, el respaldo o los gráficos.`;
+  }
+
+  const SUGGESTIONS = [
+    '¿Cuál es el estado actual?',
+    '¿Cómo está la batería?',
+    '¿Cómo giran las aspas?',
+    '¿Cómo afecta el clima?',
+    '¿Cómo funciona el respaldo?'
+  ];
+
+  const toggleBtn = document.getElementById('ecoChatToggle');
+  const panel = document.getElementById('ecoChatPanel');
+  const closeBtn = document.getElementById('ecoChatClose');
+  const messages = document.getElementById('ecoChatMessages');
+  const form = document.getElementById('ecoChatForm');
+  const input = document.getElementById('ecoChatInput');
+  const suggestionsBox = document.getElementById('ecoChatSuggestions');
+  const badge = document.getElementById('ecoChatBadge');
+  if (!toggleBtn || !panel) { console.warn('[Asistente] Elementos no encontrados'); return; }
+
+  function openChat() {
+    panel.classList.add('open');
+    panel.setAttribute('aria-hidden', 'false');
+    toggleBtn.setAttribute('aria-expanded', 'true');
+    if (badge) badge.hidden = true;
+    if (!messages.children.length) {
+      addMessage('bot', 'Hola. Soy el asistente del simulador. Pregúntame por el estado, el clima, la batería, el respaldo o los gráficos. También narro lo que toques.');
+      renderSuggestions();
+    }
+    setTimeout(() => input && input.focus(), 320);
+  }
+  function closeChat() {
+    panel.classList.remove('open');
+    panel.setAttribute('aria-hidden', 'true');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+  }
+  toggleBtn.addEventListener('click', () => panel.classList.contains('open') ? closeChat() : openChat());
+  closeBtn && closeBtn.addEventListener('click', closeChat);
+
+  function addMessage(who, text) {
+    const el = document.createElement('div');
+    el.className = 'eco-msg ' + who;
+    el.textContent = text;
+    messages.appendChild(el);
+    messages.scrollTop = messages.scrollHeight;
+    return el;
+  }
+  function addTyping() {
+    const el = document.createElement('div');
+    el.className = 'eco-msg bot typing';
+    el.innerHTML = '<span></span><span></span><span></span>';
+    messages.appendChild(el);
+    messages.scrollTop = messages.scrollHeight;
+    return el;
+  }
+  function renderSuggestions() {
+    suggestionsBox.innerHTML = '';
+    SUGGESTIONS.forEach(s => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.textContent = s;
+      b.addEventListener('click', () => ask(s));
+      suggestionsBox.appendChild(b);
+    });
+  }
+
+  function ask(question) {
+    const q = String(question || '').trim();
+    if (!q) return;
+    refreshKnowledge();
+    addMessage('user', q);
+    if (input) input.value = '';
+    suggestionsBox.innerHTML = '';
+    const typing = addTyping();
+    setTimeout(() => {
+      let answer = simulationAnswer(q) || specialResponse(q);
+      if (!answer) {
+        const found = findAnswer(q);
+        if (found) answer = cleanAnswer(found.text);
+      }
+      if (!answer) answer = fallbackAnswer();
+      typing.classList.remove('typing');
+      typing.textContent = answer;
+      messages.scrollTop = messages.scrollHeight;
+      renderSuggestions();
+      if (voiceOn) speakJarvis(answer);
+    }, 350 + Math.random() * 300);
+  }
+  form && form.addEventListener('submit', e => { e.preventDefault(); ask(input.value); });
+
+  /* Narración de acciones: siempre se muestra y se pronuncia, en cola */
+  window.ecoChatNarrate = function (msg) {
+    if (!msg) return;
+    pendingNarration = setTimeout(() => {
+      if (!panel.classList.contains('open') && badge) badge.hidden = false;
+      addMessage('bot', msg.replace(/\*\*/g, ''));
+      if (voiceOn) speakJarvis(msg, true);
+    }, 150);
+  };
+
+  function refreshKnowledge() {
+    KNOWLEDGE = buildKnowledge();
+    SIM_SNAPSHOT = readSimulationState();
+  }
+  window.ecoChatRefresh = refreshKnowledge;
+
+  function init() {
+    refreshKnowledge();
+    setTimeout(() => {
+      if (!panel.classList.contains('open') && badge) badge.hidden = false;
+    }, 8000);
+    document.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        panel.classList.contains('open') ? closeChat() : openChat();
+      }
+      if (e.key === 'Escape' && panel.classList.contains('open')) closeChat();
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>
